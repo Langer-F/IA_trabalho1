@@ -1,6 +1,9 @@
 import numpy as np
 
 
+
+
+
 def calcula_custo(tabuleiro):
     """Dado um tabuleiro, calcula quantos pares de rainhas estão 'Se atacando'"""
     n = len(tabuleiro)
@@ -25,21 +28,20 @@ def calcula_custo(tabuleiro):
                             custo = custo + tabuleiro[i-k][j-k]
     return custo//2                     
 
-def troca_linha(tabuleiro,i1: int,i2: int):
-    """Dado um tabuleiro e dois valores i1 e i2, troca as linhas i1 e i2 de lugar,
-    ou seja, i1 vai para onde i2 estava e i2 vai para onde i1 estava"""
-    aux = tabuleiro.copy()
-    tabuleiro[i1] = tabuleiro[i2]
-    tabuleiro[i2] = aux[i1]
+def move_rainha(tabuleiro,inicio: tuple,destino: tuple):
+    (linha_inicio,coluna_inicio) = inicio
+    (linha_destino,coluna_destino) = destino
+    tabuleiro[linha_destino,coluna_destino], tabuleiro[linha_inicio][coluna_inicio] = tabuleiro[linha_inicio][coluna_inicio], tabuleiro[linha_destino,coluna_destino]
     return tabuleiro
 
-def troca_coluna(tabuleiro, j1: int, j2: int):
-    """Dado um tabuleiro e dois valores j1 e j2, troca as linhas j1 e j2 de lugar,
-    ou seja, j1 vai para onde j2 estava e j2 vai para onde j1 estava"""
-    aux = tabuleiro.copy()
-    tabuleiro[:,j1] = tabuleiro[:,j2]
-    tabuleiro[:,j2] = aux[:,j1]
-    return tabuleiro
+def move_rainha_de_linha(tabuleiro,inicio: tuple, destino: tuple):
+    assert inicio[1] == destino[1]
+    return move_rainha(tabuleiro=tabuleiro,inicio=inicio,destino=destino)
+
+def move_rainha_de_coluna(tabuleiro,inicio: tuple, destino: tuple):
+    assert inicio[0] == destino[0]
+    return move_rainha(tabuleiro=tabuleiro,inicio=inicio,destino=destino)
+
 
 def cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(n: int):
     """Cria um tabuleiro NxN com N rainhas posicionadas, sendo que nenhuma linha ou coluna repete"""
@@ -72,10 +74,16 @@ def cria_tabuleiro_inicial_aleatorio(n: int):
 
 
 def main():
-    tabuleiro = cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(15)
+    #tabuleiro = cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(6)
     #tabuleiro = cria_tabuleiro_inicial_aleatorio(6)
+    
+    tabuleiro = np.zeros((6,6),dtype = int)
+    tabuleiro[3] = 1
     print(tabuleiro)
-    print(calcula_custo(tabuleiro= tabuleiro))
+    print("\n")
+    print(move_rainha_de_linha(tabuleiro= tabuleiro,inicio=(0,4),destino=(3,4)))
+    print(move_rainha_de_coluna(tabuleiro= tabuleiro,inicio=(0,4),destino=(0,2)))
+    
     #tabuleiro = troca_coluna(tabuleiro,0,1)
     #print("-------------------------------------------")
     #print(tabuleiro)
@@ -85,4 +93,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
