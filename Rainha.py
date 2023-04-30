@@ -1,28 +1,33 @@
 import numpy as np
-
-"""Intuito de ser hashable"""
-
+import unittest
 
 class Tabuleiro:
     def __init__(self, tabuleiro) -> None:
-        self.tabuleiro = tabuleiro
+        self.tabuleiro = np.array(tabuleiro)
 
-    def acha_posicao_rainhas(self) -> np.array:
+    def acha_posicao_rainhas(self):
         linhas, colunas = np.shape(self.tabuleiro)
         rainhas = []
         for i in range(linhas):
             for j in range(colunas):
                 if self.tabuleiro[i, j] == 1:
                     rainhas.append((i, j))
-        return np.array(rainhas)
+        return rainhas
 
     def acha_todas_posicoes_possiveis_de_rainha(self, rainha) -> list:
         linhas, colunas = np.shape(self.tabuleiro)
 
         posicoes = []
         for i in range(linhas):
-            posicoes.append((i, rainha[1]))
-            posicoes.append((rainha[0], i))
+            move_horizontal = (i, rainha[1])
+            move_vertical = (rainha[0], i)
+            if move_horizontal != rainha:
+                if move_horizontal not in posicoes and self.tabuleiro[move_horizontal[0], move_horizontal[1]] == 0:
+                    posicoes.append(move_horizontal)
+            if move_vertical != rainha and self.tabuleiro[move_vertical[0], move_vertical[1]] == 0:
+                posicoes.append(move_vertical)
+                if move_vertical not in posicoes:
+                    posicoes.append(move_vertical)
 
         return posicoes
 
@@ -52,24 +57,22 @@ class Tabuleiro:
 
 
     def n_rainhas_busca_em_largura(self):
-        tabuleiros_a_expandir = self.acha_todas_movimentacoes_possiveis_de_rainhas()
-        visited = {}
+        tabuleiros_a_expandir = [self]
+        visitados = {}
 
         while tabuleiros_a_expandir:
-            if len(tabuleiros_a_expandir) == 0:
-                print(tabuleiros_a_expandir)
             tabuleiro: Tabuleiro = tabuleiros_a_expandir.pop(0)
-            visited[tabuleiro.to_string()] = tabuleiro
 
-            if self.calcula_custo() == 0:
-                return visited
+            visitados[str(tabuleiro)] = tabuleiro
 
-            for proximo_a_inserir in self.acha_todas_movimentacoes_possiveis_de_rainhas():
-                if visited.get(proximo_a_inserir.to_string()) is None:
+            if tabuleiro.calcula_custo() == 0:
+                return (visitados, True)
+
+            for proximo_a_inserir in tabuleiro.acha_todas_movimentacoes_possiveis_de_rainhas():
+                if visitados.get(str(proximo_a_inserir)) is None:
                     tabuleiros_a_expandir.append(proximo_a_inserir)
                     
-
-        return visited
+        return (visitados, False)
 
 
     def calcula_custo(self):
@@ -130,13 +133,81 @@ class Tabuleiro:
         return str(self.tabuleiro)
 
 
-def main():
-    tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(4)
+class TestDFS(unittest.TestCase):
+    def test_pode_calcular_custos(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0, 0, 1, 0],
+            [1, 0, 0, 0],
+            [0, 0, 0, 1],
+            [0, 1, 0, 0]
+        ]))
+        self.assertEqual(tabuleiro.calcula_custo(), 0)
+        tabuleiro = Tabuleiro(np.array([
+            [0, 1, 0, 0],
+            [1, 0, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        ]))
+        self.assertEqual(tabuleiro.calcula_custo(), 2)
 
-    print(tabuleiro.tabuleiro)
-    # print(acha_todas_posicoes_possiveis_de_rainhas(tabuleiro))
-    print(tabuleiro.n_rainhas_busca_em_largura())
+    def test_dfs_next(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0, 0, 1, 0],
+            [1, 0, 0, 0],
+            [0, 0, 0, 1],
+            [0, 1, 0, 0]
+        ]))
+
+        dfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        self.assertEqual(dfs_result[1], True)
+
+        tabuleiro = Tabuleiro(np.array([
+            [0, 0, 0, 0],
+            [1, 0, 1, 0],
+            [0, 0, 0, 1],
+            [0, 1, 0, 0]
+        ]))
+
+        dfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        self.assertEqual(dfs_result[1], True)
+
+        tabuleiro = Tabuleiro(np.array([
+            [0, 0, 0, 0],
+            [1, 0, 0, 0],
+            [0, 0, 0, 1],
+            [0, 1, 1, 0]
+        ]))
+
+        dfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        self.assertEqual(dfs_result[1], True)
+
+    def test_can_offer_reasonable_moves(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0, 0],
+            [1, 1],
+        ]))
+
+        self.assertListEqual(tabuleiro.acha_posicao_rainhas(), [
+            (1, 0),
+            (1, 1)
+        ])
+
+        tabuleiro = Tabuleiro(np.array([
+            [0, 0, 0],
+            [1, 1, 1],
+            [0, 0, 0],
+        ]))
+
+        self.assertListEqual(tabuleiro.acha_posicao_rainhas(), [
+                             (1, 0), (1, 1), (1, 2)])
+
+    def test_dfs_distant(self):
+        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+            4)
+
+        dfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        self.assertEqual(dfs_result[1], True)
 
 
 if __name__ == '__main__':
-    main()
+    unittest.main()
