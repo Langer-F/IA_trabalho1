@@ -55,6 +55,47 @@ class Tabuleiro:
         assert inicio[0] == destino[0]
         return self.move_rainha_em_novo_tabuleiro(inicio=inicio, destino=destino)
 
+    def n_rainhas_busca_em_profundidade(self):
+        pilha_tabuleiros_a_expandir = [self]
+
+        visitados = {}
+
+        LIMITE_PROFUNDIDADE = 10
+
+        limitado = LIMITE_PROFUNDIDADE
+
+        while pilha_tabuleiros_a_expandir:
+            while limitado > 0:
+                tabuleiro_base = pilha_tabuleiros_a_expandir.pop()
+
+                if not visitados.get(str(tabuleiro_base)) is None:
+                    continue
+
+                if tabuleiro_base.calcula_custo() == 0:
+                    return (tabuleiro_base, True)
+
+                visitados[str(tabuleiro_base)] = tabuleiro_base
+
+                pilha_tabuleiros_a_expandir += tabuleiro_base.acha_todas_movimentacoes_possiveis_de_rainhas()
+                limitado -= 1
+
+            limitado = LIMITE_PROFUNDIDADE
+            copia_pilha = list(pilha_tabuleiros_a_expandir)
+
+            while copia_pilha:
+                tabuleiro_base = copia_pilha.pop(0)
+
+                if not visitados.get(str(tabuleiro_base)) is None:
+                    continue
+
+                if tabuleiro_base.calcula_custo() == 0:
+                    return (tabuleiro_base, True)
+
+                visitados[str(tabuleiro_base)] = tabuleiro_base
+
+                pilha_tabuleiros_a_expandir += tabuleiro_base.acha_todas_movimentacoes_possiveis_de_rainhas()
+
+        return (None, False)
 
     def n_rainhas_busca_em_largura(self):
         tabuleiros_a_expandir = [self]
@@ -133,7 +174,7 @@ class Tabuleiro:
         return str(self.tabuleiro)
 
 
-class TestDFS(unittest.TestCase):
+class Testbfs(unittest.TestCase):
     def test_pode_calcular_custos(self):
         tabuleiro = Tabuleiro(np.array([
             [0, 0, 1, 0],
@@ -150,7 +191,7 @@ class TestDFS(unittest.TestCase):
         ]))
         self.assertEqual(tabuleiro.calcula_custo(), 2)
 
-    def test_dfs_next(self):
+    def test_bfs_next(self):
         tabuleiro = Tabuleiro(np.array([
             [0, 0, 1, 0],
             [1, 0, 0, 0],
@@ -158,8 +199,8 @@ class TestDFS(unittest.TestCase):
             [0, 1, 0, 0]
         ]))
 
-        dfs_result = tabuleiro.n_rainhas_busca_em_largura()
-        self.assertEqual(dfs_result[1], True)
+        bfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        self.assertEqual(bfs_result[1], True)
 
         tabuleiro = Tabuleiro(np.array([
             [0, 0, 0, 0],
@@ -168,8 +209,8 @@ class TestDFS(unittest.TestCase):
             [0, 1, 0, 0]
         ]))
 
-        dfs_result = tabuleiro.n_rainhas_busca_em_largura()
-        self.assertEqual(dfs_result[1], True)
+        bfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        self.assertEqual(bfs_result[1], True)
 
         tabuleiro = Tabuleiro(np.array([
             [0, 0, 0, 0],
@@ -178,8 +219,8 @@ class TestDFS(unittest.TestCase):
             [0, 1, 1, 0]
         ]))
 
-        dfs_result = tabuleiro.n_rainhas_busca_em_largura()
-        self.assertEqual(dfs_result[1], True)
+        bfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        self.assertEqual(bfs_result[1], True)
 
     def test_can_offer_reasonable_moves(self):
         tabuleiro = Tabuleiro(np.array([
@@ -201,11 +242,95 @@ class TestDFS(unittest.TestCase):
         self.assertListEqual(tabuleiro.acha_posicao_rainhas(), [
                              (1, 0), (1, 1), (1, 2)])
 
+    def test_bfs_distant(self):
+        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+            4)
+
+        bfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        self.assertEqual(bfs_result[1], True)
+
+    """
+    def test_bfs_5(self):
+        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+            5)
+
+        bfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        self.assertEqual(bfs_result[1], True)
+
+    def test_bfs_6(self):
+        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+            6)
+
+        bfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        self.assertEqual(bfs_result[1], True)
+    """
+
     def test_dfs_distant(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             4)
 
-        dfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        bfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        self.assertEqual(bfs_result[1], True)
+
+    def test_dfs_5(self):
+        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+            5)
+
+        bfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        self.assertEqual(bfs_result[1], True)
+
+    """
+    def test_dfs_6(self):
+        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+            6)
+
+        bfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        self.assertEqual(bfs_result[1], True)
+
+    def test_dfs_8(self):
+        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+            8)
+
+        bfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        self.assertEqual(bfs_result[1], True)
+
+    def test_dfs_10(self):
+        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+            10)
+
+        bfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        self.assertEqual(bfs_result[1], True)
+    """
+
+    def test_dfs_next(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0, 0, 1, 0],
+            [1, 0, 0, 0],
+            [0, 0, 0, 1],
+            [0, 1, 0, 0]
+        ]))
+
+        dfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        self.assertEqual(dfs_result[1], True)
+
+        tabuleiro = Tabuleiro(np.array([
+            [0, 0, 0, 0],
+            [1, 0, 1, 0],
+            [0, 0, 0, 1],
+            [0, 1, 0, 0]
+        ]))
+
+        dfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        self.assertEqual(dfs_result[1], True)
+
+        tabuleiro = Tabuleiro(np.array([
+            [0, 0, 0, 0],
+            [1, 0, 0, 0],
+            [0, 0, 0, 1],
+            [0, 1, 1, 0]
+        ]))
+
+        dfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
         self.assertEqual(dfs_result[1], True)
 
 
