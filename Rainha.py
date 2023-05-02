@@ -2,8 +2,14 @@ import numpy as np
 import unittest
 
 class Tabuleiro:
-    def __init__(self, tabuleiro) -> None:
+    def __init__(self, tabuleiro, origem=None) -> None:
         self.tabuleiro = np.array(tabuleiro)
+        self.origem = origem
+
+    def criar_caminho_string(self):
+        caminho_ate_ele = self.origem.criar_caminho_string(
+        ) if self.origem is not None else "--- INICIO ---\n"
+        return caminho_ate_ele + str(self) + "\n\n"
 
     def acha_posicao_rainhas(self):
         linhas, colunas = np.shape(self.tabuleiro)
@@ -42,7 +48,7 @@ class Tabuleiro:
     def move_rainha_em_novo_tabuleiro(self, inicio: tuple, destino: tuple):
         (linha_inicio, coluna_inicio) = inicio
         (linha_destino, coluna_destino) = destino
-        novo_tabuleiro = Tabuleiro(self.tabuleiro)
+        novo_tabuleiro = Tabuleiro(self.tabuleiro, self)
         novo_tabuleiro.tabuleiro[linha_destino, coluna_destino], novo_tabuleiro.tabuleiro[linha_inicio][coluna_inicio] = novo_tabuleiro.tabuleiro[
             linha_inicio][coluna_inicio], novo_tabuleiro.tabuleiro[linha_destino, coluna_destino]
         return novo_tabuleiro
@@ -107,14 +113,13 @@ class Tabuleiro:
             visitados[str(tabuleiro)] = tabuleiro
 
             if tabuleiro.calcula_custo() == 0:
-                return (visitados, True)
+                return (tabuleiro, True)
 
             for proximo_a_inserir in tabuleiro.acha_todas_movimentacoes_possiveis_de_rainhas():
                 if visitados.get(str(proximo_a_inserir)) is None:
                     tabuleiros_a_expandir.append(proximo_a_inserir)
-                    
-        return (visitados, False)
 
+        return (None, False)
 
     def calcula_custo(self):
         """Dado um tabuleiro, calcula quantos pares de rainhas estão 'Se atacando'"""
@@ -140,8 +145,6 @@ class Tabuleiro:
                                 custo = custo + self.tabuleiro[i-k][j-k]
         return custo//2
 
-
-
     def cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(n: int):
         """Cria um tabuleiro NxN com N rainhas posicionadas, sendo que nenhuma linha ou coluna repete"""
         tabuleiro = np.zeros((n, n), dtype=int)
@@ -157,7 +160,6 @@ class Tabuleiro:
             tabuleiro[i][coluna] = 1
         return Tabuleiro(tabuleiro)
 
-
     def cria_tabuleiro_inicial_aleatorio(n: int):
         """Cria um tabuleiro NxN com N rainhas posicionadas aleatoriamente, sem restrição (obviamente uma rainha nao pode ocupar uma casa já ocupada)"""
         tabuleiro = np.zeros((n, n), dtype=int)
@@ -169,7 +171,7 @@ class Tabuleiro:
                 coluna = np.random.randint(0, n)
             tabuleiro[linha][coluna] = 1
         return Tabuleiro(tabuleiro)
-    
+
     def __str__(self):
         return str(self.tabuleiro)
 
@@ -336,3 +338,8 @@ class Testbfs(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # tabuleiro, conseguiu = Tabuleiro.cria_tabuleiro_inicial_aleatorio(
+    #    4).n_rainhas_busca_em_profundidade()
+
+    # if conseguiu:
+    #    print(tabuleiro.criar_caminho_string())
