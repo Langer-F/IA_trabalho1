@@ -41,14 +41,11 @@ Observações Importantes:
 def generate_initial_boards():
     n = int(input("N: "))
     assert n >= 3 and n <= 5, "N deve ser entre 3 e 5"
-    board1 = ['B'] * n + ['X'] + ['P'] * n
-    board2 = ['P'] * n + ['X'] + ['B'] * n
-    return (tuple(board1), tuple(board2))
+    board1 = 'B' * n + 'X' + 'P' * n
+    board2 = 'P' * n + 'X' + 'B' * n
+    return board1, board2
 
 
-b1, b2 = generate_initial_boards()
-print(b1)
-print(b2)
 
 def generate_children(state):
     """
@@ -96,43 +93,19 @@ def is_goal(state):
     """
 
     n = len(state) // 2
+    str = ''.join(state)
+    bloco_b = 'B' * n
+    bloco_p = 'P' * n
+    blocos = (bloco_b, bloco_p)
 
     # Verifica se a posição vazia está à esquerda ou à direita
-    if state.index('0') < n:
-        whites = state[:n]
-        blacks = state[n + 1:]
-    else:
-        whites = state[1:n + 1]
-        blacks = state[n:]
-
-    # Verifica se todas as fichas brancas estão no meio das pretas
-    for i, w in enumerate(whites):
-        if w == 'B':
-            for j, b in enumerate(blacks[:i]):
-                if b == 'P':
-                    return False
-            for j, b in enumerate(blacks[i + 1:]):
-                if b == 'P':
-                    return False
-        elif w == '0':
-            if 'B' in whites[i + 1:] or 'B' in blacks:
-                return False
-        else:
-            continue
-
-    # Verifica se todas as fichas pretas estão no meio das brancas
-    for i, b in enumerate(blacks):
-        if b == 'P':
-            for j, w in enumerate(whites[:i]):
-                if w == 'B':
-                    return False
-            for j, w in enumerate(whites[i + 1:]):
-                if w == 'B':
-                    return False
-        elif b == '0':
-            if 'P' in blacks[i + 1:] or 'P' in whites:
-                return False
-        else:
-            continue
-
-    return True
+    if state[0] == 'X' or state[-1] == 'X':
+        # Temos um bloco
+        if bloco_b or bloco_p in str:
+            # Bloco não está na borda
+            if not (str.startswith(blocos) or str.endswith(blocos)):
+                # Bloco não está ao lado do X - equivalente a termos os 2 tipos de blocos
+                if not (bloco_b and bloco_p in str):
+                    return True
+    
+    return False
