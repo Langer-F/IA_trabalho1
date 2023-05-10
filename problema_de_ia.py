@@ -1,3 +1,7 @@
+import numpy as np
+
+LIMITE_SUBIDA_DE_ENCOSTA = 100
+
 class Estado:
     def __init__(self, tabuleiro, origem=None):
         self.tabuleiro = tabuleiro
@@ -44,7 +48,7 @@ class Estado:
             if movimento.calcula_custo() <= menor_estado.calcula_custo():
                 menor_estado = movimento
 
-        if menor_estado == self or limit > 100:
+        if menor_estado == self or limit > LIMITE_SUBIDA_DE_ENCOSTA:
             return (self, False)
 
         new_limit = 0
@@ -53,8 +57,34 @@ class Estado:
 
         return menor_estado.subida_de_encosta(new_limit)
 
-    def subida_de_encosta_com_reinicio_aleatorio(self, reinicio_aleatorio=0) -> tuple:
-        pass
+    def subida_de_encosta_com_reinicio_aleatorio(self, quantidade_a_subir: int=0) -> tuple:
+        if self.calcula_custo() == 0:
+            return (self, True)
+        
+        if quantidade_a_subir > 0:
+            a_subir = self.origem if self.origem is not None else self
+
+            movimentos_possiveis = a_subir.gera_movimentos_possiveis()
+
+            a_subir = movimentos_possiveis[np.random.randint(len(movimentos_possiveis))]
+
+            try:
+                return a_subir.subida_de_encosta_com_reinicio_aleatorio(quantidade_a_subir-1)
+            except RecursionError:
+                return (self, False)
+
+        movimentos_possiveis = self.gera_movimentos_possiveis()
+
+        menor_estado = self
+        for movimento in movimentos_possiveis:
+            if movimento.calcula_custo() <= menor_estado.calcula_custo():
+                menor_estado = movimento
+
+        if menor_estado.calcula_custo() < self.calcula_custo():
+            return menor_estado.subida_de_encosta_com_reinicio_aleatorio()
+        
+        return self.subida_de_encosta_com_reinicio_aleatorio(np.random.randint(100))
+
 
     def criar_caminho_string(self):
         caminho_ate_ele = "--- INICIO ---\n"
