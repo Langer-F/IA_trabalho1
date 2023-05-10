@@ -88,6 +88,7 @@ def generate_children(state):
     return children
 
 def is_goal(state):
+    print("Vamos descobrir se " + str(state) + " é estado final aceitável")
     """
     Objetivo: todas as fichas brancas no meio das pretas ou o contrário,
     estando a posição vazia à esquerda ou à direita (4 estados finais)
@@ -111,7 +112,7 @@ def is_goal(state):
 
     while len(state) > 0 and state[0] == primeiro_bloco:
         state.pop(0)
-    
+
     if len(state) == 0:
         return False
 
@@ -140,6 +141,7 @@ class QuebraCabecaTest(unittest.TestCase):
         self.assertTrue(is_goal(list("BPPPBBX")))
         self.assertTrue(is_goal(list("XBPPPBB")))
         self.assertFalse(is_goal(list("PBBXBPP")))
+        self.assertFalse(is_goal(list("XPBBPBP")))
         self.assertFalse(is_goal(list("PBXBBPP")))
         self.assertFalse(is_goal(list("PXBBBPP")))
 
