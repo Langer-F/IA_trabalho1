@@ -7,6 +7,9 @@ class Estado:
         self.tabuleiro = tabuleiro
         self.origem = origem
 
+    def eh_estado_final(self) -> bool:
+        pass
+
     def calcula_custo(self) -> int:
         pass
 
@@ -16,7 +19,7 @@ class Estado:
     def gera_movimentos_possiveis(self) -> list:
         pass
 
-    def busca_em_profundidade(self) -> tuple:
+    def busca_em_profundidade_iterativa(self) -> tuple:
         pilha_tabuleiros_a_expandir = [self]
 
         visitados = {}
@@ -32,7 +35,7 @@ class Estado:
                 if not visitados.get(str(tabuleiro_base)) is None:
                     continue
 
-                if tabuleiro_base.calcula_custo() == 0:
+                if tabuleiro_base.eh_estado_final():
                     return (tabuleiro_base, True)
 
                 visitados[str(tabuleiro_base)] = tabuleiro_base
@@ -49,14 +52,14 @@ class Estado:
                 if not visitados.get(str(tabuleiro_base)) is None:
                     continue
 
-                if tabuleiro_base.calcula_custo() == 0:
+                if tabuleiro_base.eh_estado_final():
                     return (tabuleiro_base, True)
 
                 visitados[str(tabuleiro_base)] = tabuleiro_base
 
                 pilha_tabuleiros_a_expandir += tabuleiro_base.gera_movimentos_possiveis()
 
-        return (None, False)
+        return (self, False)
 
     def busca_em_largura(self) -> tuple:
         estados_a_expandir = [self]
@@ -67,7 +70,7 @@ class Estado:
 
             visitados[str(estado)] = estado
 
-            if estado.calcula_custo() == 0:
+            if estado.eh_estado_final():
                 return (estado, True)
 
             for proximo_a_inserir in estado.gera_movimentos_possiveis():
@@ -77,7 +80,7 @@ class Estado:
         return (None, False)
 
     def subida_de_encosta(self, limit=100) -> tuple:
-        if self.calcula_custo() == 0:
+        if self.eh_estado_final():
             return (self, True)
 
         movimentos_possiveis = self.gera_movimentos_possiveis()
@@ -97,7 +100,7 @@ class Estado:
         return menor_estado.subida_de_encosta(new_limit)
 
     def subida_de_encosta_com_reinicio_aleatorio(self, quantidade_a_subir: int=0) -> tuple:
-        if self.calcula_custo() == 0:
+        if self.eh_estado_final():
             return (self, True)
         
         if quantidade_a_subir > 0:

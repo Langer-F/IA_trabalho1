@@ -6,6 +6,9 @@ class Tabuleiro(Estado):
     def __init__(self, tabuleiro, origem=None) -> None:
         super().__init__(np.array(tabuleiro), origem)
 
+    def eh_estado_final(self) -> bool:
+        return self.calcula_custo() == 0
+
     def acha_posicao_rainhas(self):
         linhas, colunas = np.shape(self.tabuleiro)
         rainhas = []
@@ -203,14 +206,14 @@ class Testbfs(unittest.TestCase):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             4)
 
-        bfs_result = tabuleiro.busca_em_profundidade()
+        bfs_result = tabuleiro.busca_em_profundidade_iterativa()
         self.assertEqual(bfs_result[1], True)
 
     def test_dfs_5(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             5)
 
-        bfs_result = tabuleiro.busca_em_profundidade()
+        bfs_result = tabuleiro.busca_em_profundidade_iterativa()
         self.assertEqual(bfs_result[1], True)
 
     def test_dfs_6(self):
@@ -221,7 +224,7 @@ class Testbfs(unittest.TestCase):
             [0, 0, 1, 0]]
         )
 
-        bfs_result = tabuleiro.busca_em_profundidade()
+        bfs_result = tabuleiro.busca_em_profundidade_iterativa()
         self.assertEqual(bfs_result[1], True)
 
     """
@@ -248,7 +251,7 @@ class Testbfs(unittest.TestCase):
             [0, 1, 0, 0]
         ]))
 
-        dfs_result = tabuleiro.busca_em_profundidade()
+        dfs_result = tabuleiro.busca_em_profundidade_iterativa()
         self.assertEqual(dfs_result[1], True)
 
         tabuleiro = Tabuleiro(np.array([
@@ -258,7 +261,7 @@ class Testbfs(unittest.TestCase):
             [0, 1, 0, 0]
         ]))
 
-        dfs_result = tabuleiro.busca_em_profundidade()
+        dfs_result = tabuleiro.busca_em_profundidade_iterativa()
         self.assertEqual(dfs_result[1], True)
 
         tabuleiro = Tabuleiro(np.array([
@@ -268,7 +271,7 @@ class Testbfs(unittest.TestCase):
             [0, 1, 1, 0]
         ]))
 
-        dfs_result = tabuleiro.busca_em_profundidade()
+        dfs_result = tabuleiro.busca_em_profundidade_iterativa()
         self.assertEqual(dfs_result[1], True)
 
     def test_subida_de_encosta_distant(self):
