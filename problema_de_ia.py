@@ -34,8 +34,25 @@ class Estado:
         return (None, False)
 
     def subida_de_encosta(self, limit=100) -> tuple:
-        pass
-    
+        if self.calcula_custo() == 0:
+            return (self, True)
+
+        movimentos_possiveis = self.gera_movimentos_possiveis()
+
+        menor_estado = self
+        for movimento in movimentos_possiveis:
+            if movimento.calcula_custo() <= menor_estado.calcula_custo():
+                menor_estado = movimento
+
+        if menor_estado == self or limit > 100:
+            return (self, False)
+
+        new_limit = 0
+        if menor_estado.calcula_custo() == self.calcula_custo():
+            new_limit = limit + 1
+
+        return menor_estado.subida_de_encosta(new_limit)
+
     def subida_de_encosta_com_reinicio_aleatorio(self, reinicio_aleatorio=0) -> tuple:
         pass
 

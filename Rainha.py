@@ -56,22 +56,6 @@ class Tabuleiro(Estado):
         assert inicio[0] == destino[0]
         return self.move_rainha_em_novo_tabuleiro(inicio=inicio, destino=destino)
 
-    def n_rainhas_subida_de_encosta(self, limit=100):
-        if self.calcula_custo() == 0:
-            return (self, True)
-
-        movimentos_possiveis = self.gera_movimentos_possiveis()
-
-        menor_estado = self
-        for movimento in movimentos_possiveis:
-            if movimento.calcula_custo() <= menor_estado.calcula_custo():
-                menor_estado = movimento
-
-        if menor_estado == self or limit > 100:
-            return (self, False)
-
-        return menor_estado.n_rainhas_subida_de_encosta(0 or (limit + 1 if menor_estado.calcula_custo() == self.calcula_custo() else 0))
-
     def n_rainhas_subida_de_encosta_com_reinicio_aleatorio(self, reinicio_aleatorio=0):
         if self.calcula_custo() == 0:
             return (self, True)
@@ -87,7 +71,7 @@ class Tabuleiro(Estado):
             return menor_estado.n_rainhas_subida_de_encosta_com_reinicio_aleatorio(0)
 
         if reinicio_aleatorio < 10 and menor_estado != self:
-            return menor_estado.n_rainhas_subida_de_encosta(reinicio_aleatorio + 1)
+            return menor_estado.n_rainhas_subida_de_encosta_com_reinicio_aleatorio(reinicio_aleatorio + 1)
 
         if np.random.randint(1000) < 50 or self.origem == None:
             return movimentos_possiveis[np.random.randint(len(movimentos_possiveis))].n_rainhas_subida_de_encosta_com_reinicio_aleatorio(self)
@@ -355,49 +339,49 @@ class Testbfs(unittest.TestCase):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             4)
 
-        bfs_result = tabuleiro.n_rainhas_subida_de_encosta()
+        bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_5(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             5)
 
-        bfs_result = tabuleiro.n_rainhas_subida_de_encosta()
+        bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_6(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             6)
 
-        bfs_result = tabuleiro.n_rainhas_subida_de_encosta()
+        bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_8(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             7)
 
-        bfs_result = tabuleiro.n_rainhas_subida_de_encosta()
+        bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_8(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             8)
 
-        bfs_result = tabuleiro.n_rainhas_subida_de_encosta()
+        bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_9(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             9)
 
-        bfs_result = tabuleiro.n_rainhas_subida_de_encosta()
+        bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_10(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             10)
 
-        bfs_result = tabuleiro.n_rainhas_subida_de_encosta()
+        bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_next(self):
@@ -408,7 +392,7 @@ class Testbfs(unittest.TestCase):
             [0, 1, 0, 0]
         ]))
 
-        subida_de_encosta_result = tabuleiro.n_rainhas_subida_de_encosta()
+        subida_de_encosta_result = tabuleiro.subida_de_encosta()
         self.assertEqual(subida_de_encosta_result[1], True)
 
         tabuleiro = Tabuleiro(np.array([
@@ -418,7 +402,7 @@ class Testbfs(unittest.TestCase):
             [0, 1, 0, 0]
         ]))
 
-        subida_de_encosta_result = tabuleiro.n_rainhas_subida_de_encosta()
+        subida_de_encosta_result = tabuleiro.subida_de_encosta()
         self.assertEqual(subida_de_encosta_result[1], True)
 
         tabuleiro = Tabuleiro(np.array([
@@ -428,7 +412,7 @@ class Testbfs(unittest.TestCase):
             [0, 1, 1, 0]
         ]))
 
-        subida_de_encosta_result = tabuleiro.n_rainhas_subida_de_encosta()
+        subida_de_encosta_result = tabuleiro.subida_de_encosta()
         self.assertEqual(subida_de_encosta_result[1], True)
 
     def test_subida_de_encosta_com_reinicio_aleatorio_distant(self):
