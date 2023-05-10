@@ -17,7 +17,46 @@ class Estado:
         pass
 
     def busca_em_profundidade(self) -> tuple:
-        pass
+        pilha_tabuleiros_a_expandir = [self]
+
+        visitados = {}
+
+        LIMITE_PROFUNDIDADE = 10
+
+        limitado = LIMITE_PROFUNDIDADE
+
+        while pilha_tabuleiros_a_expandir:
+            while limitado > 0:
+                tabuleiro_base = pilha_tabuleiros_a_expandir.pop()
+
+                if not visitados.get(str(tabuleiro_base)) is None:
+                    continue
+
+                if tabuleiro_base.calcula_custo() == 0:
+                    return (tabuleiro_base, True)
+
+                visitados[str(tabuleiro_base)] = tabuleiro_base
+
+                pilha_tabuleiros_a_expandir += tabuleiro_base.gera_movimentos_possiveis()
+                limitado -= 1
+
+            limitado = LIMITE_PROFUNDIDADE
+            copia_pilha = list(pilha_tabuleiros_a_expandir)
+
+            while copia_pilha:
+                tabuleiro_base = copia_pilha.pop(0)
+
+                if not visitados.get(str(tabuleiro_base)) is None:
+                    continue
+
+                if tabuleiro_base.calcula_custo() == 0:
+                    return (tabuleiro_base, True)
+
+                visitados[str(tabuleiro_base)] = tabuleiro_base
+
+                pilha_tabuleiros_a_expandir += tabuleiro_base.gera_movimentos_possiveis()
+
+        return (None, False)
 
     def busca_em_largura(self) -> tuple:
         estados_a_expandir = [self]

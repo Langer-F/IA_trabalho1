@@ -56,48 +56,6 @@ class Tabuleiro(Estado):
         assert inicio[0] == destino[0]
         return self.move_rainha_em_novo_tabuleiro(inicio=inicio, destino=destino)
 
-    def n_rainhas_busca_em_profundidade(self):
-        pilha_tabuleiros_a_expandir = [self]
-
-        visitados = {}
-
-        LIMITE_PROFUNDIDADE = 10
-
-        limitado = LIMITE_PROFUNDIDADE
-
-        while pilha_tabuleiros_a_expandir:
-            while limitado > 0:
-                tabuleiro_base = pilha_tabuleiros_a_expandir.pop()
-
-                if not visitados.get(str(tabuleiro_base)) is None:
-                    continue
-
-                if tabuleiro_base.calcula_custo() == 0:
-                    return (tabuleiro_base, True)
-
-                visitados[str(tabuleiro_base)] = tabuleiro_base
-
-                pilha_tabuleiros_a_expandir += tabuleiro_base.gera_movimentos_possiveis()
-                limitado -= 1
-
-            limitado = LIMITE_PROFUNDIDADE
-            copia_pilha = list(pilha_tabuleiros_a_expandir)
-
-            while copia_pilha:
-                tabuleiro_base = copia_pilha.pop(0)
-
-                if not visitados.get(str(tabuleiro_base)) is None:
-                    continue
-
-                if tabuleiro_base.calcula_custo() == 0:
-                    return (tabuleiro_base, True)
-
-                visitados[str(tabuleiro_base)] = tabuleiro_base
-
-                pilha_tabuleiros_a_expandir += tabuleiro_base.gera_movimentos_possiveis()
-
-        return (None, False)
-
     def calcula_custo(self):
         """Dado um tabuleiro, calcula quantos pares de rainhas estão 'Se atacando'"""
         n = len(self.tabuleiro)
@@ -245,14 +203,14 @@ class Testbfs(unittest.TestCase):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             4)
 
-        bfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        bfs_result = tabuleiro.busca_em_profundidade()
         self.assertEqual(bfs_result[1], True)
 
     def test_dfs_5(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             5)
 
-        bfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        bfs_result = tabuleiro.busca_em_profundidade()
         self.assertEqual(bfs_result[1], True)
 
     def test_dfs_6(self):
@@ -263,7 +221,7 @@ class Testbfs(unittest.TestCase):
             [0, 0, 1, 0]]
         )
 
-        bfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        bfs_result = tabuleiro.busca_em_profundidade()
         self.assertEqual(bfs_result[1], True)
 
     """
@@ -271,14 +229,14 @@ class Testbfs(unittest.TestCase):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             8)
 
-        bfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        bfs_result = tabuleiro.busca_em_profundidade()
         self.assertEqual(bfs_result[1], True)
 
     def test_dfs_10(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             10)
 
-        bfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        bfs_result = tabuleiro.busca_em_profundidade()
         self.assertEqual(bfs_result[1], True)
     """
 
@@ -290,7 +248,7 @@ class Testbfs(unittest.TestCase):
             [0, 1, 0, 0]
         ]))
 
-        dfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        dfs_result = tabuleiro.busca_em_profundidade()
         self.assertEqual(dfs_result[1], True)
 
         tabuleiro = Tabuleiro(np.array([
@@ -300,7 +258,7 @@ class Testbfs(unittest.TestCase):
             [0, 1, 0, 0]
         ]))
 
-        dfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        dfs_result = tabuleiro.busca_em_profundidade()
         self.assertEqual(dfs_result[1], True)
 
         tabuleiro = Tabuleiro(np.array([
@@ -310,7 +268,7 @@ class Testbfs(unittest.TestCase):
             [0, 1, 1, 0]
         ]))
 
-        dfs_result = tabuleiro.n_rainhas_busca_em_profundidade()
+        dfs_result = tabuleiro.busca_em_profundidade()
         self.assertEqual(dfs_result[1], True)
 
     def test_subida_de_encosta_distant(self):
@@ -480,7 +438,7 @@ class Testbfs(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
     # tabuleiro, conseguiu = Tabuleiro.cria_tabuleiro_inicial_aleatorio(
-    #    4).n_rainhas_busca_em_profundidade()
+    #    4).busca_em_profundidade()
 
     # if conseguiu:
     #    print(tabuleiro.criar_caminho_string())
