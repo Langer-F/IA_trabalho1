@@ -1,16 +1,10 @@
 import numpy as np
 import unittest
+from problema_de_ia import Estado 
 
-
-class Tabuleiro:
+class Tabuleiro(Estado):
     def __init__(self, tabuleiro, origem=None) -> None:
-        self.tabuleiro = np.array(tabuleiro)
-        self.origem = origem
-
-    def criar_caminho_string(self):
-        caminho_ate_ele = self.origem.criar_caminho_string(
-        ) if self.origem is not None else "--- INICIO ---\n"
-        return caminho_ate_ele + str(self) + "\n\n"
+        super().__init__(np.array(tabuleiro), origem)
 
     def acha_posicao_rainhas(self):
         linhas, colunas = np.shape(self.tabuleiro)
@@ -38,7 +32,7 @@ class Tabuleiro:
 
         return posicoes
 
-    def acha_todas_movimentacoes_possiveis_de_rainhas(self) -> list:
+    def gera_movimentos_possiveis(self) -> list:
         tabuleiros_a_expandir = []
         for rainha in self.acha_posicao_rainhas():
             for posicao in self.acha_todas_posicoes_possiveis_de_rainha(rainha):
@@ -66,7 +60,7 @@ class Tabuleiro:
         if self.calcula_custo() == 0:
             return (self, True)
 
-        movimentos_possiveis = self.acha_todas_movimentacoes_possiveis_de_rainhas()
+        movimentos_possiveis = self.gera_movimentos_possiveis()
 
         menor_estado = self
         for movimento in movimentos_possiveis:
@@ -82,7 +76,7 @@ class Tabuleiro:
         if self.calcula_custo() == 0:
             return (self, True)
 
-        movimentos_possiveis = self.acha_todas_movimentacoes_possiveis_de_rainhas()
+        movimentos_possiveis = self.gera_movimentos_possiveis()
 
         menor_estado = self
         for movimento in movimentos_possiveis:
@@ -121,7 +115,7 @@ class Tabuleiro:
 
                 visitados[str(tabuleiro_base)] = tabuleiro_base
 
-                pilha_tabuleiros_a_expandir += tabuleiro_base.acha_todas_movimentacoes_possiveis_de_rainhas()
+                pilha_tabuleiros_a_expandir += tabuleiro_base.gera_movimentos_possiveis()
                 limitado -= 1
 
             limitado = LIMITE_PROFUNDIDADE
@@ -138,25 +132,7 @@ class Tabuleiro:
 
                 visitados[str(tabuleiro_base)] = tabuleiro_base
 
-                pilha_tabuleiros_a_expandir += tabuleiro_base.acha_todas_movimentacoes_possiveis_de_rainhas()
-
-        return (None, False)
-
-    def n_rainhas_busca_em_largura(self):
-        tabuleiros_a_expandir = [self]
-        visitados = {}
-
-        while tabuleiros_a_expandir:
-            tabuleiro: Tabuleiro = tabuleiros_a_expandir.pop(0)
-
-            visitados[str(tabuleiro)] = tabuleiro
-
-            if tabuleiro.calcula_custo() == 0:
-                return (tabuleiro, True)
-
-            for proximo_a_inserir in tabuleiro.acha_todas_movimentacoes_possiveis_de_rainhas():
-                if visitados.get(str(proximo_a_inserir)) is None:
-                    tabuleiros_a_expandir.append(proximo_a_inserir)
+                pilha_tabuleiros_a_expandir += tabuleiro_base.gera_movimentos_possiveis()
 
         return (None, False)
 
@@ -211,9 +187,6 @@ class Tabuleiro:
             tabuleiro[linha][coluna] = 1
         return Tabuleiro(tabuleiro)
 
-    def __str__(self):
-        return str(self.tabuleiro)
-
 
 class Testbfs(unittest.TestCase):
     def test_pode_calcular_custos(self):
@@ -240,7 +213,7 @@ class Testbfs(unittest.TestCase):
             [0, 1, 0, 0]
         ]))
 
-        bfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        bfs_result = tabuleiro.busca_em_largura()
         self.assertEqual(bfs_result[1], True)
 
         tabuleiro = Tabuleiro(np.array([
@@ -250,7 +223,7 @@ class Testbfs(unittest.TestCase):
             [0, 1, 0, 0]
         ]))
 
-        bfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        bfs_result = tabuleiro.busca_em_largura()
         self.assertEqual(bfs_result[1], True)
 
         tabuleiro = Tabuleiro(np.array([
@@ -260,7 +233,7 @@ class Testbfs(unittest.TestCase):
             [0, 1, 1, 0]
         ]))
 
-        bfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        bfs_result = tabuleiro.busca_em_largura()
         self.assertEqual(bfs_result[1], True)
 
     def test_can_offer_reasonable_moves(self):
@@ -287,14 +260,14 @@ class Testbfs(unittest.TestCase):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             4)
 
-        bfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        bfs_result = tabuleiro.busca_em_largura()
         self.assertEqual(bfs_result[1], True)
 
     def test_bfs_5(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             5)
 
-        bfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        bfs_result = tabuleiro.busca_em_largura()
         self.assertEqual(bfs_result[1], True)
 
     """
@@ -302,7 +275,7 @@ class Testbfs(unittest.TestCase):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
             6)
 
-        bfs_result = tabuleiro.n_rainhas_busca_em_largura()
+        bfs_result = tabuleiro.busca_em_largura()
         self.assertEqual(bfs_result[1], True)
     """
 
