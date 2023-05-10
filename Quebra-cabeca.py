@@ -1,3 +1,4 @@
+import unittest
 import numpy as np
 
 """
@@ -91,21 +92,57 @@ def is_goal(state):
     Objetivo: todas as fichas brancas no meio das pretas ou o contrário,
     estando a posição vazia à esquerda ou à direita (4 estados finais)
     """
+    if len(state) == 0:
+        return False
 
-    n = len(state) // 2
-    str = ''.join(state)
-    bloco_b = 'B' * n
-    bloco_p = 'P' * n
-    blocos = (bloco_b, bloco_p)
-
-    # Verifica se a posição vazia está à esquerda ou à direita
-    if state[0] == 'X' or state[-1] == 'X':
-        # Temos um bloco
-        if bloco_b or bloco_p in str:
-            # Bloco não está na borda
-            if not (str.startswith(blocos) or str.endswith(blocos)):
-                # Bloco não está ao lado do X - equivalente a termos os 2 tipos de blocos
-                if not (bloco_b and bloco_p in str):
-                    return True
+    if state.count('X') != 1:
+        return False
     
-    return False
+    if state[0] != 'X' and state[-1] != 'X':
+        return False
+    
+    if state[0] == 'X':
+        state = state[1:]
+    else:
+        state = state[:-1]
+    
+    primeiro_bloco = state[0]
+    segundo_bloco = None
+
+    while len(state) > 0 and state[0] == primeiro_bloco:
+        state.pop(0)
+    
+    if len(state) == 0:
+        return False
+
+    segundo_bloco = state[0]
+    terceiro_bloco = None
+
+    while state[0] == segundo_bloco:
+        state.pop(0)
+    
+    if len(state) == 0:
+        return False
+
+    terceiro_bloco = state[0]
+
+    while len(state) > 0:
+        elemento_do_terceiro_bloco = state.pop(0)
+        if elemento_do_terceiro_bloco != terceiro_bloco:
+            return False
+    
+    return True
+
+class QuebraCabecaTest(unittest.TestCase):
+    def test_goal(self):
+        self.assertTrue(is_goal(list("PBBBPPX")))
+        self.assertTrue(is_goal(list("XPBBBPP")))
+        self.assertTrue(is_goal(list("BPPPBBX")))
+        self.assertTrue(is_goal(list("XBPPPBB")))
+        self.assertFalse(is_goal(list("PBBXBPP")))
+        self.assertFalse(is_goal(list("PBXBBPP")))
+        self.assertFalse(is_goal(list("PXBBBPP")))
+
+
+if __name__ == '__main__':
+    unittest.main()
