@@ -40,12 +40,19 @@ class QuebraCabeca(Estado):
         custo da solução: ................ 6
     """
 
-    def generate_initial_boards():
-        n = int(input("N: "))
-        assert n >= 3 and n <= 5, "N deve ser entre 3 e 5"
+    def calcula_custo(self) -> int:
+        return super().calcula_custo()
+
+    def generate_initial_boards(n):
         board1 = 'B' * n + 'X' + 'P' * n
         board2 = 'P' * n + 'X' + 'B' * n
-        return board1, board2
+        return QuebraCabeca(board1), QuebraCabeca(board2)
+    
+    def generate_all_initial_boards():
+        boards = []
+        for i in range(3, 5+1):
+            boards += QuebraCabeca.generate_initial_boards(i)
+        return boards
 
     def acha_n(self) -> int:
         return len(self.tabuleiro) // 2
@@ -144,11 +151,22 @@ class QuebraCabecaTest(unittest.TestCase):
         self.assertFalse(QuebraCabeca.eh_estado_final_estatico(list("PXBBBPP")))
     
     def test_dfs(self):
-        tabuleiro_final, dfs_result = QuebraCabeca(list("BBXPP")).busca_em_profundidade_iterativa()
+        for quebra_cabeca in QuebraCabeca.generate_all_initial_boards():
+            tabuleiro_final, dfs_result = quebra_cabeca.busca_em_profundidade_iterativa()
 
-        print(tabuleiro_final.criar_caminho_string())
+            self.assertEqual(dfs_result, True)
 
-        self.assertEqual(dfs_result, True)
+    def test_bfs(self):
+        for quebra_cabeca in QuebraCabeca.generate_all_initial_boards():
+            tabuleiro_final, result = quebra_cabeca.busca_em_largura()
+
+            self.assertEqual(result, True)
+
+    def test_subida_de_encosta(self):
+        for quebra_cabeca in QuebraCabeca.generate_all_initial_boards():
+            tabuleiro_final, result = quebra_cabeca.subida_de_encosta()
+
+            self.assertEqual(result, True)
 
 
 if __name__ == '__main__':
