@@ -93,14 +93,21 @@ class Estado:
     def busca_de_custo_uniforme(self) -> tuple:
         estados_a_expandir = [self]
         visitados = {}
+        
+        custos_minimos = ([], False)
 
         while estados_a_expandir:
             estado: Estado = estados_a_expandir.pop(0)
 
             visitados[str(estado)] = estado
+            
+            if len(custos_minimos[0]) > 0 and estado.calcula_custo_desde_o_inicio() > custos_minimos[0][0].calcula_custo_desde_o_inicio():
+                continue # consideracao lista esta ordenada
 
             if estado.eh_estado_final():
-                return (estado, True)
+                custos_minimos[0].append(estado)
+                custos_minimos[0].sort(key=lambda estado_na_fila: estado_na_fila.calcula_custo_desde_o_inicio())
+                custos_minimos = (custos_minimos[0], True)
 
             for proximo_a_inserir in estado.gera_movimentos_possiveis_deste():
                 if visitados.get(str(proximo_a_inserir)) is None:
@@ -108,7 +115,7 @@ class Estado:
             
             estados_a_expandir.sort(key=lambda estado_na_fila: estado_na_fila.calcula_custo_desde_o_inicio())
 
-        return (None, False)
+        return custos_minimos
 
 
     def subida_de_encosta(self, limit=100) -> tuple:
