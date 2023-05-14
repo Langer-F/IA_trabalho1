@@ -10,14 +10,16 @@ class Estado:
     def eh_estado_final(self) -> bool:
         pass
 
-    def calcula_custo_de_transicao() -> int:
-        return 1
-    
     def avalia_custo_do_estado_atual(self) -> int:
         pass
 
+    def calcula_custo_de_transicao(self) -> int:
+        if self.origem is None:
+            return 0
+        return 1
+
     def calcula_custo_desde_o_inicio(self) -> int:
-        custo_acumulado = self.avalia_custo_do_estado_atual()
+        custo_acumulado = self.calcula_custo_de_transicao()
         if self.origem is not None:
             custo_acumulado += self.origem.calcula_custo_desde_o_inicio()
         return custo_acumulado
@@ -88,6 +90,27 @@ class Estado:
 
         return (None, False)
 
+    def busca_de_custo_uniforme(self) -> tuple:
+        estados_a_expandir = [self]
+        visitados = {}
+
+        while estados_a_expandir:
+            estado: Estado = estados_a_expandir.pop(0)
+
+            visitados[str(estado)] = estado
+
+            if estado.eh_estado_final():
+                return (estado, True)
+
+            for proximo_a_inserir in estado.gera_movimentos_possiveis_deste():
+                if visitados.get(str(proximo_a_inserir)) is None:
+                    estados_a_expandir.append(proximo_a_inserir)
+            
+            estados_a_expandir.sort(key=lambda estado_na_fila: estado_na_fila.calcula_custo_desde_o_inicio())
+
+        return (None, False)
+
+
     def subida_de_encosta(self, limit=100) -> tuple:
         if self.eh_estado_final():
             return (self, True)
@@ -96,7 +119,7 @@ class Estado:
 
         menor_estado = self
         for movimento in movimentos_possiveis:
-            if movimento.calcula_custo_transicao() <= menor_estado.avalia_custo_do_estado_atual():
+            if movimento.calcula_custo_de_transicao() <= menor_estado.avalia_custo_do_estado_atual():
                 menor_estado = movimento
 
         if menor_estado == self or limit > LIMITE_SUBIDA_DE_ENCOSTA:
@@ -128,7 +151,7 @@ class Estado:
 
         menor_estado = self
         for movimento in movimentos_possiveis:
-            if movimento.calcula_custo_transicao() <= menor_estado.avalia_custo_do_estado_atual():
+            if movimento.calcula_custo_de_transicao() <= menor_estado.avalia_custo_do_estado_atual():
                 menor_estado = movimento
 
         if menor_estado.avalia_custo_do_estado_atual() < self.avalia_custo_do_estado_atual():
