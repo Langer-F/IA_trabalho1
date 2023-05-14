@@ -3,9 +3,10 @@ import numpy as np
 LIMITE_SUBIDA_DE_ENCOSTA = 100
 
 class Estado:
-    def __init__(self, tabuleiro, origem=None):
+    def __init__(self, tabuleiro, origem=None, limite_repeticoes_subida_de_encosta=LIMITE_SUBIDA_DE_ENCOSTA):
         self.tabuleiro = tabuleiro
         self.origem = origem
+        self.limite_repeticoes_subida_de_encosta = limite_repeticoes_subida_de_encosta
 
     def eh_estado_final(self) -> bool:
         pass
@@ -19,9 +20,13 @@ class Estado:
         return 1
 
     def calcula_custo_desde_o_inicio(self) -> int:
+        if hasattr(self, 'custo_desde_o_inicio_cacheado_sem_recalculo'):
+            return self.custo_desde_o_inicio_cacheado_sem_recalculo
+
         custo_acumulado = self.calcula_custo_de_transicao()
         if self.origem is not None:
             custo_acumulado += self.origem.calcula_custo_desde_o_inicio()
+        self.custo_desde_o_inicio_cacheado_sem_recalculo = custo_acumulado
         return custo_acumulado
 
     def calcula_heuristica(self) -> int:
@@ -118,7 +123,7 @@ class Estado:
         return custos_minimos
 
 
-    def subida_de_encosta(self, limit=100) -> tuple:
+    def subida_de_encosta(self, contador_repeticoes_custo=0) -> tuple:
         if self.eh_estado_final():
             return (self, True)
 
@@ -126,45 +131,41 @@ class Estado:
 
         menor_estado = self
         for movimento in movimentos_possiveis:
-            if movimento.calcula_custo_de_transicao() <= menor_estado.avalia_custo_do_estado_atual():
-                menor_estado = movimento
-
-        if menor_estado == self or limit > LIMITE_SUBIDA_DE_ENCOSTA:
-            return (self, False)
-
-        new_limit = 0
-        if menor_estado.avalia_custo_do_estado_atual() == self.avalia_custo_do_estado_atual():
-            new_limit = limit + 1
-
-        return menor_estado.subida_de_encosta(new_limit)
-
-    def subida_de_encosta_com_reinicio_aleatorio(self, quantidade_a_subir: int=0) -> tuple:
-        if self.eh_estado_final():
-            return (self, True)
-        
-        if quantidade_a_subir > 0:
-            a_subir = self.origem if self.origem is not None else self
-
-            movimentos_possiveis = a_subir.gera_movimentos_possiveis_deste()
-
-            a_subir = movimentos_possiveis[np.random.randint(len(movimentos_possiveis))]
-
-            try:
-                return a_subir.subida_de_encosta_com_reinicio_aleatorio(quantidade_a_subir-1)
-            except RecursionError:
-                return (self, False)
-
-        movimentos_possiveis = self.gera_movimentos_possiveis_deste()
-
-        menor_estado = self
-        for movimento in movimentos_possiveis:
-            if movimento.calcula_custo_de_transicao() <= menor_estado.avalia_custo_do_estado_atual():
+            if movimento.avalia_custo_do_estado_atual() <= menor_estado.avalia_custo_do_estado_atual():
                 menor_estado = movimento
 
         if menor_estado.avalia_custo_do_estado_atual() < self.avalia_custo_do_estado_atual():
-            return menor_estado.subida_de_encosta_com_reinicio_aleatorio()
+            menor_estado.limite_repeticoes_subida_de_encosta = self.limite_repeticoes_subida_de_encosta
+            return menor_estado.subida_de_encosta()
+
+        if menor_estado == self or contador_repeticoes_custo > self.limite_repeticoes_subida_de_encosta:
+            return (self, False)
         
-        return self.subida_de_encosta_com_reinicio_aleatorio(np.random.randint(100))
+        return menor_estado.subida_de_encosta(contador_repeticoes_custo + 1)
+
+    def subida_de_encosta_com_reinicio_aleatorio(self, quantidade_a_subir: int=0, subir=False) -> tuple:
+        if self.eh_estado_final():
+            return (self, True)
+        
+        if subir:
+            if self.origem is None or quantidade_a_subir == 0:
+                movimentos_possiveis = self.gera_movimentos_possiveis_deste()
+
+                return movimentos_possiveis[np.random.randint(len(movimentos_possiveis))].subida_de_encosta_com_reinicio_aleatorio()
+            elif quantidade_a_subir > 0:
+                return self.subida_de_encosta_com_reinicio_aleatorio(quantidade_a_subir=quantidade_a_subir - 1, subir=True)
+
+        movimentos_possiveis = self.gera_movimentos_possiveis_deste()
+
+        menor_estado_que_este = self
+        for movimento in movimentos_possiveis:
+            if movimento.calcula_custo_de_transicao() < menor_estado_que_este.avalia_custo_do_estado_atual():
+                menor_estado_que_este = movimento
+
+        if menor_estado_que_este != self:
+            return menor_estado_que_este.subida_de_encosta_com_reinicio_aleatorio()
+        
+        return self.subida_de_encosta_com_reinicio_aleatorio(quantidade_a_subir=np.random.randint(100), subir=True)
 
 
     def criar_caminho_string(self):
