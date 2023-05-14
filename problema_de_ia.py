@@ -10,13 +10,22 @@ class Estado:
     def eh_estado_final(self) -> bool:
         pass
 
-    def calcula_custo(self) -> int:
+    def calcula_custo_de_transicao() -> int:
+        return 1
+    
+    def avalia_custo_do_estado_atual(self) -> int:
         pass
+
+    def calcula_custo_desde_o_inicio(self) -> int:
+        custo_acumulado = self.avalia_custo_do_estado_atual()
+        if self.origem is not None:
+            custo_acumulado += self.origem.calcula_custo_desde_o_inicio()
+        return custo_acumulado
 
     def calcula_heuristica(self) -> int:
         pass
 
-    def gera_movimentos_possiveis(self) -> list:
+    def gera_movimentos_possiveis_deste(self) -> list:
         pass
 
     def busca_em_profundidade_iterativa(self) -> tuple:
@@ -40,7 +49,7 @@ class Estado:
 
                 visitados[str(tabuleiro_base)] = tabuleiro_base
 
-                pilha_tabuleiros_a_expandir += tabuleiro_base.gera_movimentos_possiveis()
+                pilha_tabuleiros_a_expandir += tabuleiro_base.gera_movimentos_possiveis_deste()
                 limitado -= 1
 
             limitado = LIMITE_PROFUNDIDADE
@@ -57,7 +66,7 @@ class Estado:
 
                 visitados[str(tabuleiro_base)] = tabuleiro_base
 
-                pilha_tabuleiros_a_expandir += tabuleiro_base.gera_movimentos_possiveis()
+                pilha_tabuleiros_a_expandir += tabuleiro_base.gera_movimentos_possiveis_deste()
 
         return (self, False)
 
@@ -73,7 +82,7 @@ class Estado:
             if estado.eh_estado_final():
                 return (estado, True)
 
-            for proximo_a_inserir in estado.gera_movimentos_possiveis():
+            for proximo_a_inserir in estado.gera_movimentos_possiveis_deste():
                 if visitados.get(str(proximo_a_inserir)) is None:
                     estados_a_expandir.append(proximo_a_inserir)
 
@@ -83,18 +92,18 @@ class Estado:
         if self.eh_estado_final():
             return (self, True)
 
-        movimentos_possiveis = self.gera_movimentos_possiveis()
+        movimentos_possiveis = self.gera_movimentos_possiveis_deste()
 
         menor_estado = self
         for movimento in movimentos_possiveis:
-            if movimento.calcula_custo() <= menor_estado.calcula_custo():
+            if movimento.calcula_custo_transicao() <= menor_estado.avalia_custo_do_estado_atual():
                 menor_estado = movimento
 
         if menor_estado == self or limit > LIMITE_SUBIDA_DE_ENCOSTA:
             return (self, False)
 
         new_limit = 0
-        if menor_estado.calcula_custo() == self.calcula_custo():
+        if menor_estado.avalia_custo_do_estado_atual() == self.avalia_custo_do_estado_atual():
             new_limit = limit + 1
 
         return menor_estado.subida_de_encosta(new_limit)
@@ -106,7 +115,7 @@ class Estado:
         if quantidade_a_subir > 0:
             a_subir = self.origem if self.origem is not None else self
 
-            movimentos_possiveis = a_subir.gera_movimentos_possiveis()
+            movimentos_possiveis = a_subir.gera_movimentos_possiveis_deste()
 
             a_subir = movimentos_possiveis[np.random.randint(len(movimentos_possiveis))]
 
@@ -115,14 +124,14 @@ class Estado:
             except RecursionError:
                 return (self, False)
 
-        movimentos_possiveis = self.gera_movimentos_possiveis()
+        movimentos_possiveis = self.gera_movimentos_possiveis_deste()
 
         menor_estado = self
         for movimento in movimentos_possiveis:
-            if movimento.calcula_custo() <= menor_estado.calcula_custo():
+            if movimento.calcula_custo_transicao() <= menor_estado.avalia_custo_do_estado_atual():
                 menor_estado = movimento
 
-        if menor_estado.calcula_custo() < self.calcula_custo():
+        if menor_estado.avalia_custo_do_estado_atual() < self.avalia_custo_do_estado_atual():
             return menor_estado.subida_de_encosta_com_reinicio_aleatorio()
         
         return self.subida_de_encosta_com_reinicio_aleatorio(np.random.randint(100))

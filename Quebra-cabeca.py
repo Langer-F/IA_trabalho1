@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 from problema_de_ia import Estado 
+from pprint import pprint
 
 class QuebraCabeca(Estado):
     """
@@ -40,13 +41,63 @@ class QuebraCabeca(Estado):
         custo da solução: ................ 6
     """
 
-    def calcula_custo(self) -> int:
-        return super().calcula_custo()
+    def gera_estados_finais(self) -> list:
+        estados_finais_sem_espacos_ps = list()
+
+        n = self.acha_n() 
+        p_no_inicio = n - 1
+
+        while p_no_inicio > 0:
+            estados_finais_sem_espacos_ps.append(list('P' * p_no_inicio + 'B' * n + 'P' * (n - p_no_inicio)))
+            p_no_inicio -= 1
+
+        estados_finais_sem_espacos = list(estados_finais_sem_espacos_ps)
+
+        for estado_final_so_com_ps_no_inicio in estados_finais_sem_espacos_ps:
+            estado_com_bs = ['P' if letra != 'P' 
+                             else 'B' 
+                             for letra in estado_final_so_com_ps_no_inicio] 
+            estados_finais_sem_espacos.append(estado_com_bs)
+        
+        estados_finais = list()
+
+        for estado_sem_espaco in estados_finais_sem_espacos:
+            estados_finais.append(['X'] + estado_sem_espaco)
+            estados_finais.append(estado_sem_espaco + ['X'])
+        
+        return estados_finais
+
+
+    def calcula_heuristica(self) -> int:
+        menor_distancia_para_estado_final = float('inf')
+
+        for estado_final in self.gera_estados_finais():
+            custo_ate_estado_final = 0
+            for posicao, ficha in enumerate(estado_final):
+                if self.tabuleiro[posicao] != ficha:
+                    custo_ate_estado_final += 1
+            menor_distancia_para_estado_final = min(menor_distancia_para_estado_final, custo_ate_estado_final)
+
+        return int(menor_distancia_para_estado_final)
+    
+    def calcula_custo_de_transicao(self) -> int:
+        if self.origem is None:
+            return 0
+        
+        difs = (0,0)
+        posicao = 0
+        for i, ficha in enumerate(self.tabuleiro):
+            if ficha != self.origem.tabuleiro[i]:
+                difs[posicao] = i
+                posicao += 1
+        
+        return abs(difs[1] - difs[0])
+                
 
     def generate_initial_boards(n):
         board1 = 'B' * n + 'X' + 'P' * n
         board2 = 'P' * n + 'X' + 'B' * n
-        return QuebraCabeca(board1), QuebraCabeca(board2)
+        return QuebraCabeca(list(board1)), QuebraCabeca(list(board2))
     
     def generate_all_initial_boards():
         boards = []
@@ -57,15 +108,7 @@ class QuebraCabeca(Estado):
     def acha_n(self) -> int:
         return len(self.tabuleiro) // 2
 
-    def gera_movimentos_possiveis(self):
-        """
-        - Fichas podem *pular* ou *deslizar* para a posição vazia,
-        quando a ela estiver distante de no máximo N casas
-        - O deslize ocorre quando a ficha está ao lado da posição vazia
-        - No máximo 2N movimentos legais (se vazio no meio da bandeja)
-        - Custo de um pulo (ou deslize se for imediato) é a distância até o vazio.
-        """
-
+    def gera_movimentos_possiveis_deste(self):
         todos_movimentos_possiveis = []
         posicao_do_x = self.tabuleiro.index('X')
 
@@ -89,15 +132,10 @@ class QuebraCabeca(Estado):
         return todos_movimentos_possiveis
 
 
-    def eh_estado_final(self):
+    def verifica_estado_final(self):
         return QuebraCabeca.eh_estado_final_estatico(list(self.tabuleiro))
 
     def eh_estado_final_estatico(state):
-        """
-        Objetivo: todas as fichas brancas no meio das pretas ou o contrário,
-        estando a posição vazia à esquerda ou à direita (4 estados finais)
-        """
-
         if len(state) == 0:
             return False
 
@@ -170,4 +208,12 @@ class QuebraCabecaTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    #unittest.main()
+    # avaliando gera_estados_finais
+    estado_n_2 = QuebraCabeca(['P', 'B', 'P', 'B', 'X'])
+    pprint(estado_n_2.gera_estados_finais())
+    estado_n_3 = QuebraCabeca(['P', 'B', 'P', 'P', 'B', 'B', 'X'])
+    pprint(estado_n_3.gera_estados_finais())
+    pprint(estado_n_3.calcula_heuristica())
+    estado_n_4 = QuebraCabeca(['P', 'B', 'P', 'P','B', 'B', 'X', 'B', 'P',])
+    pprint(estado_n_4.gera_estados_finais())

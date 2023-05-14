@@ -7,7 +7,7 @@ class Tabuleiro(Estado):
         super().__init__(np.array(tabuleiro), origem)
 
     def eh_estado_final(self) -> bool:
-        return self.calcula_custo() == 0
+        return self.avalia_custo_do_estado_atual() == 0
 
     def acha_posicao_rainhas(self):
         linhas, colunas = np.shape(self.tabuleiro)
@@ -35,7 +35,7 @@ class Tabuleiro(Estado):
 
         return posicoes
 
-    def gera_movimentos_possiveis(self) -> list:
+    def gera_movimentos_possiveis_deste(self) -> list:
         tabuleiros_a_expandir = []
         for rainha in self.acha_posicao_rainhas():
             for posicao in self.acha_todas_posicoes_possiveis_de_rainha(rainha):
@@ -58,9 +58,12 @@ class Tabuleiro(Estado):
     def move_rainha_de_coluna(self, inicio: tuple, destino: tuple):
         assert inicio[0] == destino[0]
         return self.move_rainha_em_novo_tabuleiro(inicio=inicio, destino=destino)
+    
+    def calcula_heuristica(self) -> int:
+        return self.avalia_custo_do_estado_atual()
 
-    def calcula_custo(self):
-        """Dado um tabuleiro, calcula quantos pares de rainhas estão 'Se atacando'"""
+    def avalia_custo_do_estado_atual(self):
+        """Diferentemente do custo de transicao comum, aqui é mais importante considerar quantas peças estão se atacando"""
         n = len(self.tabuleiro)
         custo = 0
 
@@ -83,7 +86,7 @@ class Tabuleiro(Estado):
                                 custo = custo + self.tabuleiro[i-k][j-k]
         return custo//2
 
-    def cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(n: int):
+    def cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(n: int):
         """Cria um tabuleiro NxN com N rainhas posicionadas, sendo que nenhuma linha ou coluna repete"""
         tabuleiro = np.zeros((n, n), dtype=int)
         for i in range(n):
@@ -119,14 +122,14 @@ class Testbfs(unittest.TestCase):
             [0, 0, 0, 1],
             [0, 1, 0, 0]
         ]))
-        self.assertEqual(tabuleiro.calcula_custo(), 0)
+        self.assertEqual(tabuleiro.avalia_custo_do_estado_atual(), 0)
         tabuleiro = Tabuleiro(np.array([
             [0, 1, 0, 0],
             [1, 0, 0, 0],
             [0, 0, 1, 0],
             [0, 0, 0, 1]
         ]))
-        self.assertEqual(tabuleiro.calcula_custo(), 2)
+        self.assertEqual(tabuleiro.avalia_custo_do_estado_atual(), 2)
 
     def test_bfs_next(self):
         tabuleiro = Tabuleiro(np.array([
@@ -180,14 +183,14 @@ class Testbfs(unittest.TestCase):
                              (1, 0), (1, 1), (1, 2)])
 
     def test_bfs_distant(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             4)
 
         bfs_result = tabuleiro.busca_em_largura()
         self.assertEqual(bfs_result[1], True)
 
     def test_bfs_5(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             5)
 
         bfs_result = tabuleiro.busca_em_largura()
@@ -203,14 +206,14 @@ class Testbfs(unittest.TestCase):
     """
 
     def test_dfs_distant(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             4)
 
         bfs_result = tabuleiro.busca_em_profundidade_iterativa()
         self.assertEqual(bfs_result[1], True)
 
     def test_dfs_5(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             5)
 
         bfs_result = tabuleiro.busca_em_profundidade_iterativa()
@@ -275,49 +278,49 @@ class Testbfs(unittest.TestCase):
         self.assertEqual(dfs_result[1], True)
 
     def test_subida_de_encosta_distant(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             4)
 
         bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_5(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             5)
 
         bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_6(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             6)
 
         bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_8(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             7)
 
         bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_8(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             8)
 
         bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_9(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             9)
 
         bfs_result = tabuleiro.subida_de_encosta()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_10(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             10)
 
         bfs_result = tabuleiro.subida_de_encosta()
@@ -355,49 +358,49 @@ class Testbfs(unittest.TestCase):
         self.assertEqual(subida_de_encosta_result[1], True)
 
     def test_subida_de_encosta_com_reinicio_aleatorio_distant(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             4)
 
         bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_com_reinicio_aleatorio_5(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             5)
 
         bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_com_reinicio_aleatorio_6(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             6)
 
         bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_com_reinicio_aleatorio_8(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             7)
 
         bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_com_reinicio_aleatorio_8(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             8)
 
         bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_com_reinicio_aleatorio_9(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             9)
 
         bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
         self.assertEqual(bfs_result[1], True)
 
     def test_subida_de_encosta_com_reinicio_aleatorio_10(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             10)
 
         bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
