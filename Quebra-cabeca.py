@@ -41,13 +41,20 @@ class QuebraCabeca(Estado):
     """
     def calcula_heuristica(self) -> int:
         return super().calcula_heuristica()
-
-    def calcula_custo_transicao(self) -> int:
+    
+    def calcula_custo_de_transicao(self) -> int:
         if self.origem is None:
             return 0
         
-
+        difs = (0,0)
+        posicao = 0
+        for i, ficha in enumerate(self.tabuleiro):
+            if ficha != self.origem.tabuleiro[i]:
+                difs[posicao] = i
+                posicao += 1
         
+        return abs(difs[1] - difs[0])
+                
 
     def generate_initial_boards(n):
         board1 = 'B' * n + 'X' + 'P' * n
@@ -63,15 +70,7 @@ class QuebraCabeca(Estado):
     def acha_n(self) -> int:
         return len(self.tabuleiro) // 2
 
-    def gera_movimentos_possiveis(self):
-        """
-        - Fichas podem *pular* ou *deslizar* para a posição vazia,
-        quando a ela estiver distante de no máximo N casas
-        - O deslize ocorre quando a ficha está ao lado da posição vazia
-        - No máximo 2N movimentos legais (se vazio no meio da bandeja)
-        - Custo de um pulo (ou deslize se for imediato) é a distância até o vazio.
-        """
-
+    def gera_movimentos_possiveis_deste(self):
         todos_movimentos_possiveis = []
         posicao_do_x = self.tabuleiro.index('X')
 
@@ -99,11 +98,6 @@ class QuebraCabeca(Estado):
         return QuebraCabeca.eh_estado_final_estatico(list(self.tabuleiro))
 
     def eh_estado_final_estatico(state):
-        """
-        Objetivo: todas as fichas brancas no meio das pretas ou o contrário,
-        estando a posição vazia à esquerda ou à direita (4 estados finais)
-        """
-
         if len(state) == 0:
             return False
 
