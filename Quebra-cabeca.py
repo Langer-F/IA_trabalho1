@@ -41,6 +41,9 @@ class QuebraCabeca(Estado):
         custo da solução: ................ 6
     """
 
+    def avalia_custo_do_estado_atual(self) -> int:
+        return self.calcula_heuristica()
+
     def gera_estados_finais(self) -> list:
         estados_finais_sem_espacos_ps = list()
 
@@ -84,15 +87,18 @@ class QuebraCabeca(Estado):
         if self.origem is None:
             return 0
         
-        difs = (0,0)
-        posicao = 0
+        distance = float('inf')
+        somar = False
         for i, ficha in enumerate(self.tabuleiro):
             if ficha != self.origem.tabuleiro[i]:
-                difs[posicao] = i
-                posicao += 1
+                if somar:
+                    distance += i
+                    return distance
+                else:
+                    distance = -i
+                    somar = True
         
-        return abs(difs[1] - difs[0])
-                
+        return distance
 
     def generate_initial_boards(n):
         board1 = 'B' * n + 'X' + 'P' * n
@@ -132,7 +138,7 @@ class QuebraCabeca(Estado):
         return todos_movimentos_possiveis
 
 
-    def verifica_estado_final(self):
+    def eh_estado_final(self):
         return QuebraCabeca.eh_estado_final_estatico(list(self.tabuleiro))
 
     def eh_estado_final_estatico(state):
@@ -207,8 +213,24 @@ class QuebraCabecaTest(unittest.TestCase):
             self.assertEqual(result, True)
 
 
+class UniformeTest(unittest.TestCase):
+    def test_uniforme(self):
+        for i in range(3, 5):
+            tabuleiro = QuebraCabeca.generate_initial_boards(i)[0]
+
+            result = tabuleiro.busca_de_custo_uniforme()
+            self.assertEqual(result[1], True)
+
+    @unittest.skip("Caso Grande...")
+    def test_uniforme_5(self):
+        tabuleiro = QuebraCabeca.generate_initial_boards(6)[1]
+
+        result = tabuleiro.busca_de_custo_uniforme()
+        self.assertEqual(result[1], True)
+
 if __name__ == '__main__':
-    #unittest.main()
+    unittest.main()
+    """
     # avaliando gera_estados_finais
     estado_n_2 = QuebraCabeca(['P', 'B', 'P', 'B', 'X'])
     pprint(estado_n_2.gera_estados_finais())
@@ -217,3 +239,4 @@ if __name__ == '__main__':
     pprint(estado_n_3.calcula_heuristica())
     estado_n_4 = QuebraCabeca(['P', 'B', 'P', 'P','B', 'B', 'X', 'B', 'P',])
     pprint(estado_n_4.gera_estados_finais())
+    """

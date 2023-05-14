@@ -40,7 +40,7 @@ class Estado:
         limitado = LIMITE_PROFUNDIDADE
 
         while pilha_tabuleiros_a_expandir:
-            while limitado > 0:
+            while limitado > 0 and pilha_tabuleiros_a_expandir:
                 tabuleiro_base = pilha_tabuleiros_a_expandir.pop()
 
                 if not visitados.get(str(tabuleiro_base)) is None:
