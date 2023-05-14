@@ -39,9 +39,15 @@ class QuebraCabeca(Estado):
         profundidade da meta: ............ 4
         custo da solução: ................ 6
     """
+    def calcula_heuristica(self) -> int:
+        return super().calcula_heuristica()
 
-    def calcula_custo(self) -> int:
-        return super().calcula_custo()
+    def calcula_custo_transicao(self) -> int:
+        if self.origem is None:
+            return 0
+        
+
+        
 
     def generate_initial_boards(n):
         board1 = 'B' * n + 'X' + 'P' * n

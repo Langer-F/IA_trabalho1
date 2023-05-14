@@ -5,12 +5,12 @@ LIMITE_SUBIDA_DE_ENCOSTA = 100
 class Estado:
     def __init__(self, tabuleiro, origem=None):
         self.tabuleiro = tabuleiro
-        self.origem = origem
+        self.origem = origem # {tabuleiro: XO_OX} -> {tabuleiro: XOO_X, custo: 1}
 
     def eh_estado_final(self) -> bool:
         pass
 
-    def calcula_custo(self) -> int:
+    def calcula_custo_transicao(self) -> int:
         pass
 
     def calcula_heuristica(self) -> int:
@@ -87,14 +87,14 @@ class Estado:
 
         menor_estado = self
         for movimento in movimentos_possiveis:
-            if movimento.calcula_custo() <= menor_estado.calcula_custo():
+            if movimento.calcula_custo_transicao() <= menor_estado.calcula_custo_transicao():
                 menor_estado = movimento
 
         if menor_estado == self or limit > LIMITE_SUBIDA_DE_ENCOSTA:
             return (self, False)
 
         new_limit = 0
-        if menor_estado.calcula_custo() == self.calcula_custo():
+        if menor_estado.calcula_custo_transicao() == self.calcula_custo_transicao():
             new_limit = limit + 1
 
         return menor_estado.subida_de_encosta(new_limit)
@@ -119,10 +119,10 @@ class Estado:
 
         menor_estado = self
         for movimento in movimentos_possiveis:
-            if movimento.calcula_custo() <= menor_estado.calcula_custo():
+            if movimento.calcula_custo_transicao() <= menor_estado.calcula_custo_transicao():
                 menor_estado = movimento
 
-        if menor_estado.calcula_custo() < self.calcula_custo():
+        if menor_estado.calcula_custo_transicao() < self.calcula_custo_transicao():
             return menor_estado.subida_de_encosta_com_reinicio_aleatorio()
         
         return self.subida_de_encosta_com_reinicio_aleatorio(np.random.randint(100))

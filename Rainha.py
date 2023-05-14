@@ -7,7 +7,7 @@ class Tabuleiro(Estado):
         super().__init__(np.array(tabuleiro), origem)
 
     def eh_estado_final(self) -> bool:
-        return self.calcula_custo() == 0
+        return self.calcula_custo_transicao() == 0
 
     def acha_posicao_rainhas(self):
         linhas, colunas = np.shape(self.tabuleiro)
@@ -59,7 +59,7 @@ class Tabuleiro(Estado):
         assert inicio[0] == destino[0]
         return self.move_rainha_em_novo_tabuleiro(inicio=inicio, destino=destino)
 
-    def calcula_custo(self):
+    def calcula_custo_transicao(self):
         """Dado um tabuleiro, calcula quantos pares de rainhas estão 'Se atacando'"""
         n = len(self.tabuleiro)
         custo = 0
@@ -119,14 +119,14 @@ class Testbfs(unittest.TestCase):
             [0, 0, 0, 1],
             [0, 1, 0, 0]
         ]))
-        self.assertEqual(tabuleiro.calcula_custo(), 0)
+        self.assertEqual(tabuleiro.calcula_custo_transicao(), 0)
         tabuleiro = Tabuleiro(np.array([
             [0, 1, 0, 0],
             [1, 0, 0, 0],
             [0, 0, 1, 0],
             [0, 0, 0, 1]
         ]))
-        self.assertEqual(tabuleiro.calcula_custo(), 2)
+        self.assertEqual(tabuleiro.calcula_custo_transicao(), 2)
 
     def test_bfs_next(self):
         tabuleiro = Tabuleiro(np.array([
