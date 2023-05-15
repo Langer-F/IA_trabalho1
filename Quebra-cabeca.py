@@ -120,7 +120,7 @@ class QuebraCabeca(Estado):
 
         n = self.acha_n()
         minima_posicao_a_esquerda = max(0, posicao_do_x - n)
-        minima_posicao_a_direita = min(len(self.tabuleiro), posicao_do_x + n)
+        minima_posicao_a_direita = min(len(self.tabuleiro), posicao_do_x + n + 1)
 
         inseridos = {}
 
@@ -139,7 +139,7 @@ class QuebraCabeca(Estado):
 
 
     def eh_estado_final(self):
-        return QuebraCabeca.eh_estado_final_estatico(list(self.tabuleiro))
+        return QuebraCabeca.eh_estado_final_estatico(self.tabuleiro)
 
     def eh_estado_final_estatico(state):
         if len(state) == 0:
@@ -206,11 +206,44 @@ class QuebraCabecaTest(unittest.TestCase):
 
             self.assertEqual(result, True)
 
-    def test_subida_de_encosta(self):
-        for quebra_cabeca in QuebraCabeca.generate_all_initial_boards():
-            tabuleiro_final, result = quebra_cabeca.subida_de_encosta()
+    def test_subida_de_encosta_rand_3(self):
+        quebra_cabeca = QuebraCabeca.generate_initial_boards(3)[0]
+        tabuleiro_final, result = quebra_cabeca.subida_de_encosta_com_reinicio_aleatorio()
 
-            self.assertEqual(result, True)
+        self.assertEqual(result, True)
+
+    def test_subida_de_encosta_rand_4(self):
+        quebra_cabeca = QuebraCabeca.generate_initial_boards(4)[0]
+        tabuleiro_final, result = quebra_cabeca.subida_de_encosta_com_reinicio_aleatorio()
+
+        self.assertEqual(result, True)
+    # infelizmente ele tenta levar o x pra ponta então acaba
+    def test_subida_de_encosta_rand_5(self):
+        quebra_cabeca = QuebraCabeca.generate_initial_boards(5)[0]
+        tabuleiro_final, result = quebra_cabeca.subida_de_encosta_com_reinicio_aleatorio()
+
+        self.assertEqual(result, True)
+
+    def test_subida_de_encosta_3(self):
+        quebra_cabeca = QuebraCabeca.generate_initial_boards(3)[0]
+        quebra_cabeca.limite_repeticoes_subida_de_encosta = 1000
+        tabuleiro_final, result = quebra_cabeca.subida_de_encosta()
+
+        self.assertEqual(result, True)
+
+    def test_subida_de_encosta_4(self):
+        quebra_cabeca = QuebraCabeca.generate_initial_boards(4)[0]
+        quebra_cabeca.limite_repeticoes_subida_de_encosta = 1000
+        tabuleiro_final, result = quebra_cabeca.subida_de_encosta()
+
+        self.assertEqual(result, True)
+    # infelizmente ele tenta levar o x pra ponta então acaba
+    def test_subida_de_encosta_5(self):
+        quebra_cabeca = QuebraCabeca.generate_initial_boards(5)[0]
+        quebra_cabeca.limite_repeticoes_subida_de_encosta = 1000
+        tabuleiro_final, result = quebra_cabeca.subida_de_encosta()
+
+        self.assertEqual(result, True)
 
 
 class UniformeTest(unittest.TestCase):

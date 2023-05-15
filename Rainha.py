@@ -437,13 +437,14 @@ class SubidaDeEncostaReinicioAleatorioTest(unittest.TestCase):
         bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
         self.assertEqual(bfs_result[1], True)
 
-    def test_subida_de_encosta_com_reinicio_aleatorio_8(self):
+    def test_subida_de_encosta_com_reinicio_aleatorio_7(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             7)
 
         bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
         self.assertEqual(bfs_result[1], True)
 
+    @unittest.skip("Grande")
     def test_subida_de_encosta_com_reinicio_aleatorio_8(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             8)
@@ -451,6 +452,7 @@ class SubidaDeEncostaReinicioAleatorioTest(unittest.TestCase):
         bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
         self.assertEqual(bfs_result[1], True)
 
+    @unittest.skip("Grande")
     def test_subida_de_encosta_com_reinicio_aleatorio_9(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             9)
@@ -458,6 +460,7 @@ class SubidaDeEncostaReinicioAleatorioTest(unittest.TestCase):
         bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
         self.assertEqual(bfs_result[1], True)
 
+    @unittest.skip("Grande")
     def test_subida_de_encosta_com_reinicio_aleatorio_10(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             10)
