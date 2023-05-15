@@ -1,16 +1,25 @@
 import numpy as np
 from random import choice
 
-LIMITE_SUBIDA_DE_ENCOSTA = 50
+LIMITE_SUBIDA_DE_ENCOSTA = 30
 
 class Estado:
-    def __init__(self, tabuleiro, origem=None, limite_repeticoes_subida_de_encosta=LIMITE_SUBIDA_DE_ENCOSTA):
+    def __init__(self, tabuleiro, origem=None, limite_repeticoes_subida_de_encosta=LIMITE_SUBIDA_DE_ENCOSTA, iteracao=1):
         self.tabuleiro = tabuleiro
         self.origem = origem
         self.limite_repeticoes_subida_de_encosta = limite_repeticoes_subida_de_encosta
+        self.iteracao = iteracao
 
     def eh_estado_final(self) -> bool:
         pass
+
+    def calcula_temperatura(self) -> float:
+        if not hasattr(self, 'temperatura_cacheada'):
+            self.temperatura_cacheada = np.exp(
+                ((self.calcula_custo_desde_o_inicio() - 
+                 self.avalia_custo_do_estado_atual()) / 
+                 self.calcula_custo_desde_o_inicio()))
+        return self.temperatura_cacheada
 
     def avalia_custo_do_estado_atual(self) -> int:
         pass
@@ -125,6 +134,9 @@ class Estado:
 
 
     def subida_de_encosta(self) -> tuple:
+        visitados = {
+            str(self): self
+        }
         ultimo_menor_estado = self
         threshold = self.limite_repeticoes_subida_de_encosta
         while threshold > 0:
@@ -133,6 +145,9 @@ class Estado:
                 return (menor_estado, True)
 
             for movimento in self.gera_movimentos_possiveis_deste():
+                if visitados.get(str(movimento)) is not None:
+                    continue
+                visitados[str(movimento)] = movimento
                 if movimento.avalia_custo_do_estado_atual() <= menor_estado.avalia_custo_do_estado_atual():
                     menor_estado = movimento
 
@@ -142,6 +157,8 @@ class Estado:
             elif menor_estado.avalia_custo_do_estado_atual() == ultimo_menor_estado.avalia_custo_do_estado_atual() and threshold > 0 and menor_estado != ultimo_menor_estado:
                 ultimo_menor_estado = menor_estado
                 threshold -= 1
+            else:
+                return (self, False)
         return (self, False)
 
     def subida_de_encosta_com_reinicio_aleatorio(self) -> tuple:
@@ -157,6 +174,8 @@ class Estado:
                 return (menor_estado, True)
 
             for movimento in self.gera_movimentos_possiveis_deste():
+                if visitados.get(str(movimento)) is not None:
+                    continue
                 visitados[str(movimento)] = movimento
                 if movimento.avalia_custo_do_estado_atual() <= menor_estado.avalia_custo_do_estado_atual():
                     menor_estado = movimento
@@ -171,7 +190,30 @@ class Estado:
                 visitado_randomico = choice(list(visitados.values()))
                 ultimo_menor_estado = choice(visitado_randomico.gera_movimentos_possiveis_deste())
                 
+    def simulated_annealing(self) -> tuple:
+        visitados = {
+            str(self): self
+        }
+        temperaturas = [self]
 
+        menor_estado = self
+        iteracao = 1
+        while True:
+            if menor_estado.eh_estado_final():
+                return (menor_estado, True)
+
+            iteracao += 1
+
+            for movimento in self.gera_movimentos_possiveis_deste():
+                if visitados.get(str(movimento)) is not None:
+                    continue 
+                visitados[str(movimento)] = movimento
+                movimento.iteracao = iteracao
+                temperaturas.append(movimento)
+            
+            temperaturas.sort(key=lambda estado_probabilistico: estado_probabilistico.calcula_temperatura())
+            menor_estado = temperaturas.pop(0)
+            
 
     def criar_caminho_string(self):
         caminho_ate_ele = "--- INICIO ---\n"
