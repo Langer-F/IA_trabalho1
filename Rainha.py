@@ -207,24 +207,6 @@ class Testbfs(unittest.TestCase):
 
         bfs_result = tabuleiro.busca_em_largura()
         self.assertEqual(bfs_result[1], True)
-    def test_a_estrela_tabuleiro4(self):
-        t = Tabuleiro.cria_tabuleiro_inicial_aleatorio(4)
-        
-        (a,b) = t.busca_a_estrela()
-        self.assertEqual(a.avalia_custo_do_estado_atual(),0)
-        self.assertEqual(b,True)
-    def test_a_estrela_tabuleiro5(self):
-        t = Tabuleiro.cria_tabuleiro_inicial_aleatorio(5)
-        
-        (a,b) = t.busca_a_estrela()
-        self.assertEqual(a.avalia_custo_do_estado_atual(),0)
-        self.assertEqual(b,True)
-    def test_a_estrela_tabuleiro6(self):
-        t = Tabuleiro.cria_tabuleiro_inicial_aleatorio(6)
-        
-        (a,b) = t.busca_a_estrela()
-        self.assertEqual(a.avalia_custo_do_estado_atual(),0)
-        self.assertEqual(b,True)
 
     """
     def test_bfs_6(self):
@@ -563,8 +545,26 @@ class SubidaDeEncostaReinicioAleatorioTest(unittest.TestCase):
         self.assertEqual(
             subida_de_encosta_com_reinicio_aleatorio_result[1], True)
 
+class AEstrelaTest(unittest.TestCase):
+    def test_a_estrela_tabuleiro4(self):
+        t = Tabuleiro.cria_tabuleiro_inicial_aleatorio(4)
+        (a,b) = t.busca_a_estrela()
+        self.assertEqual(a.avalia_custo_do_estado_atual(),0)
+        self.assertEqual(b,True)
+    def test_a_estrela_tabuleiro5(self):
+        t = Tabuleiro.cria_tabuleiro_inicial_aleatorio(5)
+        (a,b) = t.busca_a_estrela()
+        self.assertEqual(a.avalia_custo_do_estado_atual(),0)
+        self.assertEqual(b,True)
+    def test_a_estrela_tabuleiro6(self):
+        t = Tabuleiro.cria_tabuleiro_inicial_aleatorio(6)
+        (a,b) = t.busca_a_estrela()
+        self.assertEqual(a.avalia_custo_do_estado_atual(),0)
+        self.assertEqual(b,True)
+
+
 if __name__ == '__main__':
-    teste_felipe()
+    unittest.main()
     # tabuleiro, conseguiu = Tabuleiro.cria_tabuleiro_inicial_aleatorio(
     #    4).busca_em_profundidade()
 
