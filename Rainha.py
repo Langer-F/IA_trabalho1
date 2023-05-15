@@ -85,7 +85,10 @@ class Tabuleiro(Estado):
                             if (i-k) >= 0 and (j-k) >= 0:
                                 custo = custo + self.tabuleiro[i-k][j-k]
         return custo//2
-
+    def calcula_custo_desde_o_inicio(self) -> int:
+        if self.origem is None:
+            return 0
+        return 1 + self.origem.calcula_custo_desde_o_inicio()
     def cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(n: int):
         """Cria um tabuleiro NxN com N rainhas posicionadas, sendo que nenhuma linha ou coluna repete"""
         tabuleiro = np.zeros((n, n), dtype=int)

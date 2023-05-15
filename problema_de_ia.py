@@ -137,28 +137,33 @@ class Estado:
         return self.subida_de_encosta_com_reinicio_aleatorio(np.random.randint(100))
 
     def busca_a_estrela(self):
-        estados_a_expandir = [self]
         visitados = {}
+
+        #se o estado atual é final, retorna ele
+        if self.eh_estado_final():
+            return self
 
         #gerar todos os filhos do nó atual
         movimentos_possiveis = self.gera_movimentos_possiveis_deste()
         custo_final = 10000000000000000
-
         #loop enquanto houver elementos em "movimentos_possiveis"
         while movimentos_possiveis:
+            flag_menor_estado = False
             menor = custo_final
 
             #remover de "movimentos_possiveis" e adicionar em visitados quem tem (custo_total_de_transicao + heuristica) > "custo_final" 
             for i in movimentos_possiveis:
-                x = (i.calcula_heuristica() + i.calcula_custo_desde_o_inicio())
+                x = (i.calcula_heuristica())
+                x = x + i.calcula_custo_desde_o_inicio()
 
-                if x>custo_final:
-                    """---------------------------------------------------Fazer esse if -----------------------------
+                if x>=custo_final:
+                    visitados[str(i)] = i
+                    movimentos_possiveis.remove(i)
                     #aqui remove i de movimentos possiveis e adiciona em visitados"""
-                    pass
+                    continue
 
 
-                #pesquisar em movimentos possiveis se alguem é estado final
+                #pesquisar em movimentos_possiveis se alguem é estado final
                 if i.eh_estado_final():
                     #se alguem for estado final, atualiza custo final caso custo_total_de_transição < custo_final
                     if i.calcula_custo_desde_o_inicio() < custo_final:
@@ -168,6 +173,7 @@ class Estado:
 
                 #pesquisar em "movimentos_possiveis" quem tem o menor valor de (custo_total_de_transicao + heuristica)
                 if x < menor:
+                    flag_menor_estado = True
                     menor_estado = i
                     menor = x
 
@@ -175,15 +181,15 @@ class Estado:
             novos_estados =  menor_estado.gera_movimentos_possiveis_deste()
             
             for j in novos_estados:
-                if j in visitados:
-                    """
-                    #aqui remove j de novos_estados, pq ele ja foi visitado
-                    """
-                    pass
-            
-            """
-            #remover menor de "movimentos_possiveis" e adicionar em "visitados"
-            """
+                if str(j) in visitados:
+                    novos_estados.remove(j)
+                else:
+                    movimentos_possiveis.append(j)
+            if flag_menor_estado:
+                movimentos_possiveis.remove(menor_estado)
+                visitados[str(menor_estado)] = menor_estado
+                #remover menor_estado de "movimentos_possiveis" e adicionar em "visitados"
+        return (estado_final,True)
 
 
     def criar_caminho_string(self):
