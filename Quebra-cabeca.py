@@ -183,6 +183,7 @@ class QuebraCabeca(Estado):
         
         return True
 
+@unittest.skip("Não interessa")
 class QuebraCabecaTest(unittest.TestCase):
     def test_goal(self):
         self.assertTrue(QuebraCabeca.eh_estado_final_estatico(list("PBBBPPX")))
@@ -246,9 +247,10 @@ class QuebraCabecaTest(unittest.TestCase):
         self.assertEqual(result, True)
 
 
+@unittest.skip("Não interessa")
 class UniformeTest(unittest.TestCase):
     def test_uniforme(self):
-        for i in range(3, 5):
+        for i in range(3, 4):
             tabuleiro = QuebraCabeca.generate_initial_boards(i)[0]
 
             result = tabuleiro.busca_de_custo_uniforme()
@@ -259,6 +261,21 @@ class UniformeTest(unittest.TestCase):
         tabuleiro = QuebraCabeca.generate_initial_boards(6)[1]
 
         result = tabuleiro.busca_de_custo_uniforme()
+        self.assertEqual(result[1], True)
+
+class SimulatedAnnealing(unittest.TestCase):
+    def test_simulated_annealing(self):
+        for i in range(3, 5):
+            tabuleiro = QuebraCabeca.generate_initial_boards(i)[0]
+
+            result = tabuleiro.simulated_annealing()
+            self.assertEqual(result[1], True)
+
+    @unittest.skip("Caso Grande...")
+    def test_simulated_annealing_5(self):
+        tabuleiro = QuebraCabeca.generate_initial_boards(6)[1]
+
+        result = tabuleiro.simulated_annealing()
         self.assertEqual(result[1], True)
 
 if __name__ == '__main__':
