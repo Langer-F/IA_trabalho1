@@ -220,6 +220,8 @@ class Estado:
         #se o estado atual é final, retorna ele
         if self.eh_estado_final():
             return self
+        
+        movimentos_possiveis = self.gera_movimentos_possiveis_deste()
 
         #gerar todos os filhos do nó atual
         custo_final = 10000000000000000

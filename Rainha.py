@@ -436,6 +436,25 @@ class A_estrela_test(unittest.TestCase):
         result = tabuleiro.busca_a_estrela()
         self.assertEqual(result[1], True)
 
+    def test_a_estrela_5(self):
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(5)
+
+        result = tabuleiro.busca_a_estrela()
+        self.assertEqual(result[1], True)
+
+    def test_a_estrela_6(self):
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(6)
+
+        result = tabuleiro.busca_a_estrela()
+        self.assertEqual(result[1], True)
+
+    @unittest.skip("Demora...")
+    def test_a_estrela_7(self):
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(7)
+
+        result = tabuleiro.busca_a_estrela()
+        self.assertEqual(result[1], True)
+
 @unittest.skip("grandes e não determinísticos...")
 class SubidaDeEncostaReinicioAleatorioTest(unittest.TestCase):
     def test_subida_de_encosta_com_reinicio_aleatorio_distant(self):
