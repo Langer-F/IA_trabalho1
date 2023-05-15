@@ -10,10 +10,9 @@ class Tabuleiro(Estado):
         return self.avalia_custo_do_estado_atual() # sabemos que não é, mas aqui não faz sentido não ser.
 
     def calcula_custo_desde_o_inicio(self) -> int:
-        custo_acumulado = self.calcula_custo_de_transicao()
-        if self.origem is not None:
-            custo_acumulado += self.origem.calcula_custo_desde_o_inicio()
-        return custo_acumulado
+        if self.origem is None:
+            return 0
+        return 1 + self.origem.calcula_custo_desde_o_inicio()
 
     def eh_estado_final(self) -> bool:
         return self.avalia_custo_do_estado_atual() == 0
