@@ -1,4 +1,5 @@
 import numpy as np
+import time
 import unittest
 from problema_de_ia import Estado 
 
@@ -127,6 +128,13 @@ class Tabuleiro(Estado):
 
 @unittest.skip("grandes e não determinísticos...")
 class Testbfs(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+
     def test_pode_calcular_custos(self):
         tabuleiro = Tabuleiro(np.array([
             [0, 0, 1, 0],
@@ -219,6 +227,13 @@ class Testbfs(unittest.TestCase):
 
 @unittest.skip("grandes e não determinísticos...")
 class UniformeTest(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+
     def test_uniforme_4(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             4)
@@ -267,6 +282,13 @@ class UniformeTest(unittest.TestCase):
 
 @unittest.skip("grandes e não determinísticos...")
 class DfsTest(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+
     def test_dfs_distant(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             4)
@@ -341,6 +363,13 @@ class DfsTest(unittest.TestCase):
 
 @unittest.skip("grandes e não determinísticos...")
 class SubidaDeEncostaTest(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+
     def test_subida_de_encosta_distant(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             4)
@@ -423,6 +452,13 @@ class SubidaDeEncostaTest(unittest.TestCase):
 
 @unittest.skip("grandes e não determinísticos...")
 class SimulatedAnnealingTest(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+
     def test_simulated_annealing(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(4)
 
@@ -430,6 +466,13 @@ class SimulatedAnnealingTest(unittest.TestCase):
         self.assertEqual(result[1], True)
 
 class A_estrela_test(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+
     def test_a_estrela(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_inicial_aleatorio(4)
 
@@ -457,6 +500,13 @@ class A_estrela_test(unittest.TestCase):
 
 @unittest.skip("grandes e não determinísticos...")
 class SubidaDeEncostaReinicioAleatorioTest(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+
     def test_subida_de_encosta_com_reinicio_aleatorio_distant(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
             4)

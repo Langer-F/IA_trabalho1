@@ -2,6 +2,7 @@ import unittest
 import numpy as np
 from problema_de_ia import Estado 
 from pprint import pprint
+import time
 
 class QuebraCabeca(Estado):
     """
@@ -183,8 +184,14 @@ class QuebraCabeca(Estado):
         
         return True
 
-@unittest.skip("Não interessa")
 class QuebraCabecaTest(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+
     def test_goal(self):
         self.assertTrue(QuebraCabeca.eh_estado_final_estatico(list("PBBBPPX")))
         self.assertTrue(QuebraCabeca.eh_estado_final_estatico(list("XPBBBPP")))
@@ -247,8 +254,14 @@ class QuebraCabecaTest(unittest.TestCase):
         self.assertEqual(result, True)
 
 
-@unittest.skip("Não interessa")
 class UniformeTest(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+
     def test_uniforme(self):
         for i in range(3, 4):
             tabuleiro = QuebraCabeca.generate_initial_boards(i)[0]
@@ -264,6 +277,13 @@ class UniformeTest(unittest.TestCase):
         self.assertEqual(result[1], True)
 
 class SimulatedAnnealing(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+
     def test_simulated_annealing(self):
         for i in range(3, 5):
             tabuleiro = QuebraCabeca.generate_initial_boards(i)[0]
@@ -271,7 +291,6 @@ class SimulatedAnnealing(unittest.TestCase):
             result = tabuleiro.simulated_annealing()
             self.assertEqual(result[1], True)
 
-    @unittest.skip("Caso Grande...")
     def test_simulated_annealing_5(self):
         tabuleiro = QuebraCabeca.generate_initial_boards(6)[1]
 
