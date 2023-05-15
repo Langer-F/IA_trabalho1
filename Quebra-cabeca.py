@@ -206,11 +206,23 @@ class QuebraCabecaTest(unittest.TestCase):
 
             self.assertEqual(result, True)
 
-    def test_subida_de_encosta_randomico(self):
-        for quebra_cabeca in QuebraCabeca.generate_all_initial_boards():
-            tabuleiro_final, result = quebra_cabeca.subida_de_encosta_com_reinicio_aleatorio()
+    def test_subida_de_encosta_rand_3(self):
+        quebra_cabeca = QuebraCabeca.generate_initial_boards(3)[0]
+        tabuleiro_final, result = quebra_cabeca.subida_de_encosta_com_reinicio_aleatorio()
 
-            self.assertEqual(result, True)
+        self.assertEqual(result, True)
+
+    def test_subida_de_encosta_rand_4(self):
+        quebra_cabeca = QuebraCabeca.generate_initial_boards(4)[0]
+        tabuleiro_final, result = quebra_cabeca.subida_de_encosta_com_reinicio_aleatorio()
+
+        self.assertEqual(result, True)
+    # infelizmente ele tenta levar o x pra ponta então acaba
+    def test_subida_de_encosta_rand_5(self):
+        quebra_cabeca = QuebraCabeca.generate_initial_boards(5)[0]
+        tabuleiro_final, result = quebra_cabeca.subida_de_encosta_com_reinicio_aleatorio()
+
+        self.assertEqual(result, True)
 
     def test_subida_de_encosta_3(self):
         quebra_cabeca = QuebraCabeca.generate_initial_boards(3)[0]

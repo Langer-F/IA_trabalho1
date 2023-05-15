@@ -1,4 +1,5 @@
 import numpy as np
+from random import choice
 
 LIMITE_SUBIDA_DE_ENCOSTA = 100
 
@@ -143,29 +144,33 @@ class Estado:
         
         return menor_estado.subida_de_encosta(contador_repeticoes_custo + 1)
 
-    def subida_de_encosta_com_reinicio_aleatorio(self, quantidade_a_subir: int=0, subir=False) -> tuple:
-        if self.eh_estado_final():
-            return (self, True)
-        
-        if subir:
-            if self.origem is None or quantidade_a_subir == 0:
-                movimentos_possiveis = self.gera_movimentos_possiveis_deste()
+    def subida_de_encosta_com_reinicio_aleatorio(self) -> tuple:
+        visitados = {
+            str(self): self
+        }
 
-                return movimentos_possiveis[np.random.randint(len(movimentos_possiveis))].subida_de_encosta_com_reinicio_aleatorio()
-            elif quantidade_a_subir > 0:
-                return self.subida_de_encosta_com_reinicio_aleatorio(quantidade_a_subir=quantidade_a_subir - 1, subir=True)
+        ultimo_menor_estado = self
+        threshold = 2# self.limite_repeticoes_subida_de_encosta
+        while True:
+            menor_estado = ultimo_menor_estado
+            if menor_estado.eh_estado_final():
+                return (self, True)
 
-        movimentos_possiveis = self.gera_movimentos_possiveis_deste()
+            for movimento in self.gera_movimentos_possiveis_deste():
+                visitados[str(movimento)] = movimento
+                if movimento.avalia_custo_do_estado_atual() <= menor_estado.avalia_custo_do_estado_atual():
+                    menor_estado = movimento
 
-        menor_estado_que_este = self
-        for movimento in movimentos_possiveis:
-            if movimento.calcula_custo_de_transicao() < menor_estado_que_este.avalia_custo_do_estado_atual():
-                menor_estado_que_este = movimento
-
-        if menor_estado_que_este != self:
-            return menor_estado_que_este.subida_de_encosta_com_reinicio_aleatorio()
-        
-        return self.subida_de_encosta_com_reinicio_aleatorio(quantidade_a_subir=np.random.randint(100), subir=True)
+            if menor_estado.avalia_custo_do_estado_atual() < ultimo_menor_estado.avalia_custo_do_estado_atual():
+                ultimo_menor_estado = menor_estado
+            elif menor_estado.avalia_custo_do_estado_atual() == ultimo_menor_estado.avalia_custo_do_estado_atual() and threshold > 0 and menor_estado != ultimo_menor_estado:
+                ultimo_menor_estado = menor_estado
+                threshold -= 1
+            else:
+                threshold = 2# self.limite_repeticoes_subida_de_encosta
+                visitado_randomico = choice(list(visitados.values()))
+                ultimo_menor_estado = choice(visitado_randomico.gera_movimentos_possiveis_deste())
+                
 
 
     def criar_caminho_string(self):
