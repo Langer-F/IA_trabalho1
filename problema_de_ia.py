@@ -1,7 +1,7 @@
 import numpy as np
 from random import choice
 
-LIMITE_SUBIDA_DE_ENCOSTA = 100
+LIMITE_SUBIDA_DE_ENCOSTA = 2
 
 class Estado:
     def __init__(self, tabuleiro, origem=None, limite_repeticoes_subida_de_encosta=LIMITE_SUBIDA_DE_ENCOSTA):
@@ -124,25 +124,26 @@ class Estado:
         return custos_minimos
 
 
-    def subida_de_encosta(self, contador_repeticoes_custo=0) -> tuple:
-        if self.eh_estado_final():
-            return (self, True)
+    def subida_de_encosta(self) -> tuple:
+        ultimo_menor_estado = self
+        threshold = self.limite_repeticoes_subida_de_encosta
+        while True:
+            menor_estado = ultimo_menor_estado
+            if menor_estado.eh_estado_final():
+                return (menor_estado, True)
 
-        movimentos_possiveis = self.gera_movimentos_possiveis_deste()
+            for movimento in self.gera_movimentos_possiveis_deste():
+                if movimento.avalia_custo_do_estado_atual() <= menor_estado.avalia_custo_do_estado_atual():
+                    menor_estado = movimento
 
-        menor_estado = self
-        for movimento in movimentos_possiveis:
-            if movimento.avalia_custo_do_estado_atual() <= menor_estado.avalia_custo_do_estado_atual():
-                menor_estado = movimento
-
-        if menor_estado.avalia_custo_do_estado_atual() < self.avalia_custo_do_estado_atual():
-            menor_estado.limite_repeticoes_subida_de_encosta = self.limite_repeticoes_subida_de_encosta
-            return menor_estado.subida_de_encosta()
-
-        if menor_estado == self or contador_repeticoes_custo > self.limite_repeticoes_subida_de_encosta:
-            return (self, False)
-        
-        return menor_estado.subida_de_encosta(contador_repeticoes_custo + 1)
+            if menor_estado.avalia_custo_do_estado_atual() < ultimo_menor_estado.avalia_custo_do_estado_atual():
+                threshold = self.limite_repeticoes_subida_de_encosta
+                ultimo_menor_estado = menor_estado
+            elif menor_estado.avalia_custo_do_estado_atual() == ultimo_menor_estado.avalia_custo_do_estado_atual() and threshold > 0 and menor_estado != ultimo_menor_estado:
+                ultimo_menor_estado = menor_estado
+                threshold -= 1
+            else:
+                return (self, False)
 
     def subida_de_encosta_com_reinicio_aleatorio(self) -> tuple:
         visitados = {
@@ -150,11 +151,11 @@ class Estado:
         }
 
         ultimo_menor_estado = self
-        threshold = 2# self.limite_repeticoes_subida_de_encosta
+        threshold = self.limite_repeticoes_subida_de_encosta
         while True:
             menor_estado = ultimo_menor_estado
             if menor_estado.eh_estado_final():
-                return (self, True)
+                return (menor_estado, True)
 
             for movimento in self.gera_movimentos_possiveis_deste():
                 visitados[str(movimento)] = movimento
@@ -167,7 +168,7 @@ class Estado:
                 ultimo_menor_estado = menor_estado
                 threshold -= 1
             else:
-                threshold = 2# self.limite_repeticoes_subida_de_encosta
+                threshold = self.limite_repeticoes_subida_de_encosta
                 visitado_randomico = choice(list(visitados.values()))
                 ultimo_menor_estado = choice(visitado_randomico.gera_movimentos_possiveis_deste())
                 
