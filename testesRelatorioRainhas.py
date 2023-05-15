@@ -88,7 +88,6 @@ def main():
     test_tabuleiro_tamanho_fixo(tabuleiro4)
     test_tabuleiro_tamanho_fixo(tabuleiro5)
     test_tabuleiro_tamanho_fixo(tabuleiro6)
-    
-    
+
 if __name__ == '__main__':
     main()
