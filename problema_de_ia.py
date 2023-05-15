@@ -18,7 +18,7 @@ class Estado:
             self.temperatura_cacheada = np.exp(
                 ((self.calcula_custo_desde_o_inicio() - 
                  self.avalia_custo_do_estado_atual()) / 
-                 self.calcula_custo_desde_o_inicio()))
+                 (self.calcula_custo_desde_o_inicio()+1)))
         return self.temperatura_cacheada
 
     def avalia_custo_do_estado_atual(self) -> int:

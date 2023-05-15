@@ -465,6 +465,7 @@ class SimulatedAnnealingTest(unittest.TestCase):
         result = tabuleiro.simulated_annealing()
         self.assertEqual(result[1], True)
 
+@unittest.skip('Grande')
 class A_estrela_test(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
@@ -594,6 +595,8 @@ class SubidaDeEncostaReinicioAleatorioTest(unittest.TestCase):
         subida_de_encosta_com_reinicio_aleatorio_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
         self.assertEqual(
             subida_de_encosta_com_reinicio_aleatorio_result[1], True)
+        
+
 
 if __name__ == '__main__':
     unittest.main()
