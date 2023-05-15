@@ -1,7 +1,7 @@
 import numpy as np
 from random import choice
 
-LIMITE_SUBIDA_DE_ENCOSTA = 2
+LIMITE_SUBIDA_DE_ENCOSTA = 50
 
 class Estado:
     def __init__(self, tabuleiro, origem=None, limite_repeticoes_subida_de_encosta=LIMITE_SUBIDA_DE_ENCOSTA):
@@ -127,7 +127,7 @@ class Estado:
     def subida_de_encosta(self) -> tuple:
         ultimo_menor_estado = self
         threshold = self.limite_repeticoes_subida_de_encosta
-        while True:
+        while threshold > 0:
             menor_estado = ultimo_menor_estado
             if menor_estado.eh_estado_final():
                 return (menor_estado, True)
@@ -142,8 +142,7 @@ class Estado:
             elif menor_estado.avalia_custo_do_estado_atual() == ultimo_menor_estado.avalia_custo_do_estado_atual() and threshold > 0 and menor_estado != ultimo_menor_estado:
                 ultimo_menor_estado = menor_estado
                 threshold -= 1
-            else:
-                return (self, False)
+        return (self, False)
 
     def subida_de_encosta_com_reinicio_aleatorio(self) -> tuple:
         visitados = {
