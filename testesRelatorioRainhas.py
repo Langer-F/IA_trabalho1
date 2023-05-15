@@ -15,20 +15,27 @@ def test_tabuleiro_tamanho_fixo(tabuleiro):
     tempo = time.time() - time_start
     if teste[1] == True:
         print("Busca A* \t\t\t\t: {:.2f} segundos".format(tempo))
+    else:
+        print("Busca A* \t\t\t\t: Nao encontrado".format(tempo))
     
     #teste simullate annealing
-    #time_start = time.time()
-    #teste = tabuleiro.simulated_annealing()
-    #tempo = time.time() - time_start
-    #if teste[1] == True:
-    #    print("Simullated annealing \t\t\t: {:.2f} segundos".format(tempo))
-    
+    time_start = time.time()
+    teste = tabuleiro.simulated_annealing()
+    tempo = time.time() - time_start
+    if teste[1] == True:
+        print("Simullated annealing \t\t\t: {:.2f} segundos".format(tempo))
+    else:
+        print("Simullated annealing \t\t\t: Nao encontrado".format(tempo))
+
     #teste busca em profundidade iterativa
     time_start = time.time()
     teste = tabuleiro.busca_em_profundidade_iterativa()
     tempo = time.time() - time_start
     if teste[1] == True:
         print("Busca em profundidade \t\t\t: {:.2f} segundos".format(tempo))
+    else:
+        print("Busca em profundidade \t\t\t: Nao encontrado".format(tempo))
+
     
     #teste busca em largura
     time_start = time.time()
@@ -36,6 +43,8 @@ def test_tabuleiro_tamanho_fixo(tabuleiro):
     tempo = time.time() - time_start
     if teste[1] == True:
         print("Busca em largura \t\t\t: {:.2f} segundos".format(tempo))
+    else:
+        print("Busca em largura \t\t\t: Nao encontrado".format(tempo))
 
     #teste busca de custo uniforme
     time_start = time.time()
@@ -43,6 +52,9 @@ def test_tabuleiro_tamanho_fixo(tabuleiro):
     tempo = time.time() - time_start
     if teste[1] == True:
         print("Busca de custo uniforme \t\t: {:.2f} segundos".format(tempo))
+    else:
+        print("Busca de custo uniforme \t\t: Nao encontrado".format(tempo))
+
 
     #teste subida de encosta
     time_start = time.time()
@@ -50,6 +62,8 @@ def test_tabuleiro_tamanho_fixo(tabuleiro):
     tempo = time.time() - time_start
     if teste[1] == True:
         print("Subida de encosta \t\t\t: {:.2f} segundos".format(tempo))
+    else:
+        print("Subida de encosta \t\t\t: Nao encontrado".format(tempo))
 
     #teste subida de encosta com reinicio aleatorio
     time_start = time.time()
@@ -57,6 +71,8 @@ def test_tabuleiro_tamanho_fixo(tabuleiro):
     tempo = time.time() - time_start
     if teste[1] == True:
         print("Subida de encosta, reinicio aleatorio \t: {:.2f} segundos".format(tempo))
+    else:
+        print("Subida de encosta, reinicio aleatorio \t: Nao encontrado".format(tempo))
 
 
 
@@ -85,9 +101,20 @@ def main():
             [0, 0, 0, 1, 0, 0],
             [0, 1, 1, 0, 0, 0]
         ]))
+    tabuleiro7 = Tabuleiro(np.array([
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 1, 1, 0, 0, 0]
+        ]))
     test_tabuleiro_tamanho_fixo(tabuleiro4)
     test_tabuleiro_tamanho_fixo(tabuleiro5)
     test_tabuleiro_tamanho_fixo(tabuleiro6)
+    test_tabuleiro_tamanho_fixo(tabuleiro7)
+    
 
 if __name__ == '__main__':
     main()
