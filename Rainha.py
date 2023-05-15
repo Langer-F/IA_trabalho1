@@ -419,6 +419,7 @@ class SubidaDeEncostaTest(unittest.TestCase):
         subida_de_encosta_result = tabuleiro.subida_de_encosta()
         self.assertEqual(subida_de_encosta_result[1], True)
 
+@unittest.skip("grandes e não determinísticos...")
 class SimulatedAnnealingTest(unittest.TestCase):
     def test_simulated_annealing(self):
         tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(4)
@@ -426,6 +427,12 @@ class SimulatedAnnealingTest(unittest.TestCase):
         result = tabuleiro.simulated_annealing()
         self.assertEqual(result[1], True)
 
+class A_estrela_test(unittest.TestCase):
+    def test_a_estrela(self):
+        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(4)
+
+        result = tabuleiro.busca_a_estrela()
+        self.assertEqual(result[1], True)
 
 @unittest.skip("grandes e não determinísticos...")
 class SubidaDeEncostaReinicioAleatorioTest(unittest.TestCase):

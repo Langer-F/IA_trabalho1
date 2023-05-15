@@ -219,49 +219,48 @@ class Estado:
         visitados = {}
 
         #gerar todos os filhos do nó atual
-        movimentos_possiveis = self.gera_movimentos_possiveis_deste()
         custo_final = 10000000000000000
 
+        solucao = (self, False)
+
         #loop enquanto houver elementos em "movimentos_possiveis"
-        while movimentos_possiveis:
+        while len(estados_a_expandir) > 0:
             menor = custo_final
 
             #remover de "movimentos_possiveis" e adicionar em visitados quem tem (custo_total_de_transicao + heuristica) > "custo_final" 
-            for i in movimentos_possiveis:
-                x = (i.calcula_heuristica() + i.calcula_custo_desde_o_inicio())
+            movimento = estados_a_expandir.pop(0)
+            
+            custo_esperado = (movimento.calcula_heuristica() + movimento.calcula_custo_desde_o_inicio())
 
-                if x>custo_final:
-                    """---------------------------------------------------Fazer esse if -----------------------------
-                    #aqui remove i de movimentos possiveis e adiciona em visitados"""
-                    pass
-
-
-                #pesquisar em movimentos possiveis se alguem é estado final
-                if i.eh_estado_final():
-                    #se alguem for estado final, atualiza custo final caso custo_total_de_transição < custo_final
-                    if i.calcula_custo_desde_o_inicio() < custo_final:
-                        custo_final = i.calcula_custo_desde_o_inicio()
-                        estado_final = i
+            if custo_esperado>custo_final:
+                #aqui remove i de movimentos possiveis e adiciona em visitados"""
+                continue
 
 
-                #pesquisar em "movimentos_possiveis" quem tem o menor valor de (custo_total_de_transicao + heuristica)
-                if x < menor:
-                    menor_estado = i
-                    menor = x
+            #pesquisar em movimentos possiveis se alguem é estado final
+            if movimento.eh_estado_final():
+                #se alguem for estado final, atualiza custo final caso custo_total_de_transição < custo_final
+                if movimento.calcula_custo_desde_o_inicio() < custo_final:
+                    custo_final = movimento.calcula_custo_desde_o_inicio()
+                    solucao = (movimento, True)
+
+            #pesquisar em "movimentos_possiveis" quem tem o menor valor de (custo_total_de_transicao + heuristica)
+            if custo_esperado < menor:
+                menor_estado = movimento
+                menor = custo_esperado
 
             #gerar os filhos do menor de todos
             novos_estados =  menor_estado.gera_movimentos_possiveis_deste()
             
-            for j in novos_estados:
-                if j in visitados:
-                    """
-                    #aqui remove j de novos_estados, pq ele ja foi visitado
-                    """
-                    pass
+            for novo_estado in novos_estados:
+                if visitados.get(str(novo_estado)) is None:
+                    visitados[str(novo_estado)] = True
+                    estados_a_expandir.append(novo_estado)
             
             """
             #remover menor de "movimentos_possiveis" e adicionar em "visitados"
             """
+        return solucao
 
 
     def criar_caminho_string(self):
