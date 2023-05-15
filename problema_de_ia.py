@@ -1,5 +1,6 @@
 import numpy as np
 from random import choice
+import random
 
 LIMITE_SUBIDA_DE_ENCOSTA = 30
 
@@ -144,7 +145,7 @@ class Estado:
             if menor_estado.eh_estado_final():
                 return (menor_estado, True)
 
-            for movimento in menor_estado.gera_movimentos_possiveis_deste():
+            for movimento in self.gera_movimentos_possiveis_deste():
                 if visitados.get(str(movimento)) is not None:
                     continue
                 visitados[str(movimento)] = movimento
@@ -194,25 +195,40 @@ class Estado:
         visitados = {
             str(self): self
         }
-        temperaturas = [self]
+        #temperatura e constante vao ditar o quao flexivel é a tempera simulada
+        constante = 5
+        temperatura = 0.99
 
-        menor_estado = self
-        iteracao = 1
-        while True:
-            if menor_estado.eh_estado_final():
-                return (menor_estado, True)
+        movimentos_laterais = 10
+        contador = 0
+        #custo aceitavel vai dizer se podemos ir para algum estado ou nao, baseado em seu custo
+        custo_aceitavel = self.avalia_custo_do_estado_atual()+constante**temperatura - 1
+        estado_atual = self
+        filhos = self.gera_movimentos_possiveis_deste()
 
-            iteracao += 1
+        #embaralhando os filhos para adicionar aleatoriedade
+        random.shuffle(filhos)
+        while len(filhos)>0:
+            if contador >= movimentos_laterais:
+                break
+            contador += 1
+            if estado_atual.eh_estado_final():
+                return(estado_atual,True)
+            temperatura = temperatura**2
+            for filho in filhos:
+                if str(filho) not in visitados:
+                    visitados[str(filho)] = filho
+                if filho.avalia_custo_do_estado_atual()<custo_aceitavel:
+                    contador = 0
+                    custo_aceitavel = filho.avalia_custo_do_estado_atual() + constante**temperatura - 1
+                    estado_atual = filho
+                    filhos = filho.gera_movimentos_possiveis_deste()
+                    for j in filhos:
+                        if str(j) in visitados:
+                            filhos.remove(j)
+                    break
 
-            for movimento in self.gera_movimentos_possiveis_deste():
-                if visitados.get(str(movimento)) is not None:
-                    continue 
-                visitados[str(movimento)] = movimento
-                movimento.iteracao = iteracao
-                temperaturas.append(movimento)
-            
-            temperaturas.sort(key=lambda estado_probabilistico: estado_probabilistico.calcula_temperatura())
-            menor_estado = temperaturas.pop(0)
+        return (estado_atual,False)
             
     def busca_a_estrela(self):
         visitados = {}
