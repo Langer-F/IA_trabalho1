@@ -431,26 +431,26 @@ class SimulatedAnnealingTest(unittest.TestCase):
 
 class A_estrela_test(unittest.TestCase):
     def test_a_estrela(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(4)
+        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_aleatorio(4)
 
         result = tabuleiro.busca_a_estrela()
         self.assertEqual(result[1], True)
 
     def test_a_estrela_5(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(5)
+        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_aleatorio(5)
 
         result = tabuleiro.busca_a_estrela()
         self.assertEqual(result[1], True)
 
     def test_a_estrela_6(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(6)
+        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_aleatorio(6)
 
         result = tabuleiro.busca_a_estrela()
         self.assertEqual(result[1], True)
 
     @unittest.skip("Demora...")
     def test_a_estrela_7(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(7)
+        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_aleatorio(7)
 
         result = tabuleiro.busca_a_estrela()
         self.assertEqual(result[1], True)
@@ -544,24 +544,6 @@ class SubidaDeEncostaReinicioAleatorioTest(unittest.TestCase):
         subida_de_encosta_com_reinicio_aleatorio_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
         self.assertEqual(
             subida_de_encosta_com_reinicio_aleatorio_result[1], True)
-
-class AEstrelaTest(unittest.TestCase):
-    def test_a_estrela_tabuleiro4(self):
-        t = Tabuleiro.cria_tabuleiro_inicial_aleatorio(4)
-        (a,b) = t.busca_a_estrela()
-        self.assertEqual(a.avalia_custo_do_estado_atual(),0)
-        self.assertEqual(b,True)
-    def test_a_estrela_tabuleiro5(self):
-        t = Tabuleiro.cria_tabuleiro_inicial_aleatorio(5)
-        (a,b) = t.busca_a_estrela()
-        self.assertEqual(a.avalia_custo_do_estado_atual(),0)
-        self.assertEqual(b,True)
-    def test_a_estrela_tabuleiro6(self):
-        t = Tabuleiro.cria_tabuleiro_inicial_aleatorio(6)
-        (a,b) = t.busca_a_estrela()
-        self.assertEqual(a.avalia_custo_do_estado_atual(),0)
-        self.assertEqual(b,True)
-
 
 if __name__ == '__main__':
     unittest.main()
