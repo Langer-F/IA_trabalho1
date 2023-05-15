@@ -144,7 +144,7 @@ class Estado:
             if menor_estado.eh_estado_final():
                 return (menor_estado, True)
 
-            for movimento in self.gera_movimentos_possiveis_deste():
+            for movimento in menor_estado.gera_movimentos_possiveis_deste():
                 if visitados.get(str(movimento)) is not None:
                     continue
                 visitados[str(movimento)] = movimento
