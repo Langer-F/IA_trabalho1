@@ -222,7 +222,7 @@ class Estado:
             return self
         
         movimentos_possiveis = self.gera_movimentos_possiveis_deste()
-
+        achou_estado_final = False
         #gerar todos os filhos do nó atual
         custo_final = 10000000000000000
         #loop enquanto houver elementos em "movimentos_possiveis"
@@ -246,6 +246,7 @@ class Estado:
                 if i.eh_estado_final():
                     #se alguem for estado final, atualiza custo final caso custo_total_de_transição < custo_final
                     if i.calcula_custo_desde_o_inicio() < custo_final:
+                        achou_estado_final = True
                         custo_final = i.calcula_custo_desde_o_inicio()
                         estado_final = i
 
@@ -260,15 +261,13 @@ class Estado:
             novos_estados =  menor_estado.gera_movimentos_possiveis_deste()
             
             for j in novos_estados:
-                if str(j) in visitados:
-                    novos_estados.remove(j)
-                else:
+                if str(j) not in visitados:
                     movimentos_possiveis.append(j)
             if flag_menor_estado:
                 movimentos_possiveis.remove(menor_estado)
                 visitados[str(menor_estado)] = menor_estado
                 #remover menor_estado de "movimentos_possiveis" e adicionar em "visitados"
-        return (estado_final,True)
+        return (estado_final,achou_estado_final)
 
 
     def criar_caminho_string(self):
