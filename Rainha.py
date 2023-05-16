@@ -129,6 +129,7 @@ class Tabuleiro(Estado):
         return Tabuleiro(tabuleiro)
 
 
+@unittest.skip("Feito")
 class Testbfs(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
@@ -248,7 +249,7 @@ class Testbfs(unittest.TestCase):
         self.assertEqual(result[1], True)
 
 
-#@unittest.skip("grandes e não determinísticos...")
+@unittest.skip("Feito")
 class UniformeTest(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
@@ -599,7 +600,6 @@ class SubidaDeEncostaTest(unittest.TestCase):
         self.assertEqual(result[1], True)
 
 
-@unittest.skip("Feito")
 class SimulatedAnnealingTest(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
@@ -608,7 +608,6 @@ class SimulatedAnnealingTest(unittest.TestCase):
         t = time.time() - self.startTime
         print('%s: %.3f' % (self.id(), t))
 
-    @unittest.skip("Feito")
     def test_4(self):
         tabuleiro = Tabuleiro(np.array([
             [0,0,0,1],
@@ -620,7 +619,6 @@ class SimulatedAnnealingTest(unittest.TestCase):
         result = tabuleiro.simulated_annealing()
         self.assertEqual(result[1], True)
 
-    @unittest.skip("Feito")
     def test_5(self):
         tabuleiro = Tabuleiro(np.array([
             [0,0,0,0,1],
@@ -633,7 +631,6 @@ class SimulatedAnnealingTest(unittest.TestCase):
         result = tabuleiro.simulated_annealing()
         self.assertEqual(result[1], True)
 
-    @unittest.skip("Feito")
     def test_6(self):
         tabuleiro = Tabuleiro(np.array([
             [0,0,0,0,0,1],
@@ -647,7 +644,6 @@ class SimulatedAnnealingTest(unittest.TestCase):
         result = tabuleiro.simulated_annealing()
         self.assertEqual(result[1], True)
 
-    @unittest.skip("Feito")
     def test_7(self):
         tabuleiro = Tabuleiro(np.array([
             [0,0,0,0,0,0,1],
@@ -662,7 +658,6 @@ class SimulatedAnnealingTest(unittest.TestCase):
         result = tabuleiro.simulated_annealing()
         self.assertEqual(result[1], True)
 
-    @unittest.skip("Feito")
     def test_8(self):
         tabuleiro = Tabuleiro(np.array([
             [0,0,1,0,0,0,0,0],
@@ -678,7 +673,6 @@ class SimulatedAnnealingTest(unittest.TestCase):
         result = tabuleiro.simulated_annealing()
         self.assertEqual(result[1], True)
         
-    @unittest.skip("Feito")
     def test_9(self):
         tabuleiro = Tabuleiro(np.array([
             [0,0,0,0,0,0,0,0,0],
@@ -695,7 +689,6 @@ class SimulatedAnnealingTest(unittest.TestCase):
         result = tabuleiro.simulated_annealing()
         self.assertEqual(result[1], True)
 
-    #@unittest.skip("Feito")
     def test_10(self):
         tabuleiro = Tabuleiro(np.array([
             [0,0,0,0,0,0,0,1,0,0],
@@ -803,7 +796,6 @@ class A_estrela_test(unittest.TestCase):
         self.assertEqual(result[1], True)
 
 
-@unittest.skip("Feito")
 @unittest.skip("Feito")
 class SubidaDeEncostaReinicioAleatorioTest(unittest.TestCase):
     def setUp(self):

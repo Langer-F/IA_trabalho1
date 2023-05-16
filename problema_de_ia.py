@@ -199,34 +199,25 @@ class Estado:
         constante = 5
         temperatura = 0.99
 
-        movimentos_laterais = 10
-        contador = 0
         #custo aceitavel vai dizer se podemos ir para algum estado ou nao, baseado em seu custo
-        custo_aceitavel = self.avalia_custo_do_estado_atual()+constante**temperatura - 1
-        estado_atual = self
-        filhos = self.gera_movimentos_possiveis_deste()
+        estados_a_expandir = [self]
 
-        #embaralhando os filhos para adicionar aleatoriedade
-        random.shuffle(filhos)
-        while len(filhos)>0:
-            if contador >= movimentos_laterais:
-                break
-            contador += 1
+        while len(estados_a_expandir)>0:
+            estado_atual = estados_a_expandir.pop(0)
             if estado_atual.eh_estado_final():
                 return(estado_atual,True)
+
             temperatura = temperatura**2
-            for filho in filhos:
-                if str(filho) not in visitados:
-                    visitados[str(filho)] = filho
-                if filho.avalia_custo_do_estado_atual()<custo_aceitavel:
-                    contador = 0
-                    custo_aceitavel = filho.avalia_custo_do_estado_atual() + constante**temperatura - 1
-                    estado_atual = filho
-                    filhos = filho.gera_movimentos_possiveis_deste()
-                    for j in filhos:
-                        if str(j) in visitados:
-                            filhos.remove(j)
-                    break
+
+            visitados[str(estado_atual)] = estado_atual
+
+            novos_estados_a_expandir = estado_atual.gera_movimentos_possiveis_deste()
+
+            for novo_estado in novos_estados_a_expandir:
+                if visitados.get(str(novo_estado)) is None:
+                    estados_a_expandir.append(novo_estado)
+            
+            estados_a_expandir.sort(key=lambda estado: (estado.avalia_custo_do_estado_atual() + constante**temperatura - 1))
 
         return (estado_atual,False)
             
