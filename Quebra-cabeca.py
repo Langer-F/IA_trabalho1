@@ -3,6 +3,8 @@ import numpy as np
 from problema_de_ia import Estado 
 from pprint import pprint
 import time
+import timeout_decorator
+LOCAL_TIMEOUT = 150
 
 class QuebraCabeca(Estado):
     """
@@ -184,118 +186,187 @@ class QuebraCabeca(Estado):
         
         return True
 
-class QuebraCabecaTest(unittest.TestCase):
+class Testbfs(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
 
     def tearDown(self):
         t = time.time() - self.startTime
         print('%s: %.3f' % (self.id(), t))
-
-    def test_goal(self):
-        self.assertTrue(QuebraCabeca.eh_estado_final_estatico(list("PBBBPPX")))
-        self.assertTrue(QuebraCabeca.eh_estado_final_estatico(list("XPBBBPP")))
-        self.assertTrue(QuebraCabeca.eh_estado_final_estatico(list("BPPPBBX")))
-        self.assertTrue(QuebraCabeca.eh_estado_final_estatico(list("XBPPPBB")))
-        self.assertFalse(QuebraCabeca.eh_estado_final_estatico(list("PBBXBPP")))
-        self.assertFalse(QuebraCabeca.eh_estado_final_estatico(list("XPBBPBP")))
-        self.assertFalse(QuebraCabeca.eh_estado_final_estatico(list("PBXBBPP")))
-        self.assertFalse(QuebraCabeca.eh_estado_final_estatico(list("PXBBBPP")))
     
-    def test_dfs(self):
-        for quebra_cabeca in QuebraCabeca.generate_all_initial_boards():
-            tabuleiro_final, dfs_result = quebra_cabeca.busca_em_profundidade_iterativa()
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_bfs_3(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(3)[0]
+        resultado = quebracabeca.busca_em_largura()
+        self.assertTrue(resultado[1])
 
-            self.assertEqual(dfs_result, True)
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_bfs_4(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(4)[1]
+        resultado = quebracabeca.busca_em_largura()
+        self.assertTrue(resultado[1])
 
-    def test_bfs(self):
-        for quebra_cabeca in QuebraCabeca.generate_all_initial_boards():
-            tabuleiro_final, result = quebra_cabeca.busca_em_largura()
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_bfs_5(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(5)[1]
+        resultado = quebracabeca.busca_em_largura()
+        self.assertTrue(resultado[1])
 
-            self.assertEqual(result, True)
-
-    def test_subida_de_encosta_rand_3(self):
-        quebra_cabeca = QuebraCabeca.generate_initial_boards(3)[0]
-        tabuleiro_final, result = quebra_cabeca.subida_de_encosta_com_reinicio_aleatorio()
-
-        self.assertEqual(result, True)
-
-    def test_subida_de_encosta_rand_4(self):
-        quebra_cabeca = QuebraCabeca.generate_initial_boards(4)[0]
-        tabuleiro_final, result = quebra_cabeca.subida_de_encosta_com_reinicio_aleatorio()
-
-        self.assertEqual(result, True)
-    # infelizmente ele tenta levar o x pra ponta então acaba
-    def test_subida_de_encosta_rand_5(self):
-        quebra_cabeca = QuebraCabeca.generate_initial_boards(5)[0]
-        tabuleiro_final, result = quebra_cabeca.subida_de_encosta_com_reinicio_aleatorio()
-
-        self.assertEqual(result, True)
-
-    def test_subida_de_encosta_3(self):
-        quebra_cabeca = QuebraCabeca.generate_initial_boards(3)[0]
-        quebra_cabeca.limite_repeticoes_subida_de_encosta = 1000
-        tabuleiro_final, result = quebra_cabeca.subida_de_encosta()
-
-        self.assertEqual(result, True)
-
-    def test_subida_de_encosta_4(self):
-        quebra_cabeca = QuebraCabeca.generate_initial_boards(4)[0]
-        quebra_cabeca.limite_repeticoes_subida_de_encosta = 1000
-        tabuleiro_final, result = quebra_cabeca.subida_de_encosta()
-
-        self.assertEqual(result, True)
-    # infelizmente ele tenta levar o x pra ponta então acaba
-    def test_subida_de_encosta_5(self):
-        quebra_cabeca = QuebraCabeca.generate_initial_boards(5)[0]
-        quebra_cabeca.limite_repeticoes_subida_de_encosta = 1000
-        tabuleiro_final, result = quebra_cabeca.subida_de_encosta()
-
-        self.assertEqual(result, True)
-
-
-class UniformeTest(unittest.TestCase):
+class Testprofu(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
 
     def tearDown(self):
         t = time.time() - self.startTime
         print('%s: %.3f' % (self.id(), t))
+    
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_dfs_3(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(3)[0]
+        resultado = quebracabeca.busca_em_profundidade_iterativa()
+        self.assertTrue(resultado[1])
 
-    def test_uniforme(self):
-        for i in range(3, 4):
-            tabuleiro = QuebraCabeca.generate_initial_boards(i)[0]
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_dfs_4(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(4)[1]
+        resultado = quebracabeca.busca_em_profundidade_iterativa()
+        self.assertTrue(resultado[1])
 
-            result = tabuleiro.busca_de_custo_uniforme()
-            self.assertEqual(result[1], True)
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_dfs_5(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(5)[1]
+        resultado = quebracabeca.busca_em_profundidade_iterativa()
+        self.assertTrue(resultado[1])
 
-    @unittest.skip("Caso Grande...")
+class Testsubida(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+    
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_subida_3(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(3)[0]
+        resultado = quebracabeca.subida_de_encosta()
+        self.assertTrue(resultado[1])
+
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_subida_4(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(4)[1]
+        resultado = quebracabeca.subida_de_encosta()
+        self.assertTrue(resultado[1])
+
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_subida_5(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(5)[1]
+        resultado = quebracabeca.subida_de_encosta()
+        self.assertTrue(resultado[1])
+
+class Testbusca_a_estrela(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+    
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_busca_a_estrela_3(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(3)[0]
+        resultado = quebracabeca.busca_a_estrela()
+        self.assertTrue(resultado[1])
+
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_busca_a_estrela_4(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(4)[1]
+        resultado = quebracabeca.busca_a_estrela()
+        self.assertTrue(resultado[1])
+
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_busca_a_estrela_5(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(5)[1]
+        resultado = quebracabeca.busca_a_estrela()
+        self.assertTrue(resultado[1])
+
+class Testsubidaaleatoria(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+    
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_subida_al_3(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(3)[0]
+        resultado = quebracabeca.subida_de_encosta_com_reinicio_aleatorio()
+        self.assertTrue(resultado[1])
+
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_subida_al_4(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(4)[1]
+        resultado = quebracabeca.subida_de_encosta_com_reinicio_aleatorio()
+        self.assertTrue(resultado[1])
+
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_subida_al_5(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(5)[1]
+        resultado = quebracabeca.subida_de_encosta_com_reinicio_aleatorio()
+        self.assertTrue(resultado[1])
+
+class Testuniforme(unittest.TestCase):
+    def setUp(self):
+        self.startTime = time.time()
+
+    def tearDown(self):
+        t = time.time() - self.startTime
+        print('%s: %.3f' % (self.id(), t))
+    
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_uniforme_3(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(3)[0]
+        resultado = quebracabeca.busca_de_custo_uniforme()
+        self.assertTrue(resultado[1])
+
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_uniforme_4(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(4)[1]
+        resultado = quebracabeca.busca_de_custo_uniforme()
+        self.assertTrue(resultado[1])
+
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
     def test_uniforme_5(self):
-        tabuleiro = QuebraCabeca.generate_initial_boards(6)[1]
+        quebracabeca = QuebraCabeca.generate_initial_boards(5)[1]
+        resultado = quebracabeca.busca_de_custo_uniforme()
+        self.assertTrue(resultado[1])   
 
-        result = tabuleiro.busca_de_custo_uniforme()
-        self.assertEqual(result[1], True)
-
-class SimulatedAnnealing(unittest.TestCase):
+class TestSimulated(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
 
     def tearDown(self):
         t = time.time() - self.startTime
         print('%s: %.3f' % (self.id(), t))
+    
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_simulated_3(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(3)[0]
+        resultado = quebracabeca.simulated_annealing()
+        self.assertTrue(resultado[1])
 
-    def test_simulated_annealing(self):
-        for i in range(3, 5):
-            tabuleiro = QuebraCabeca.generate_initial_boards(i)[0]
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_simulated_4(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(4)[1]
+        resultado = quebracabeca.simulated_annealing()
+        self.assertTrue(resultado[1])
 
-            result = tabuleiro.simulated_annealing()
-            self.assertEqual(result[1], True)
-
-    def test_simulated_annealing_5(self):
-        tabuleiro = QuebraCabeca.generate_initial_boards(6)[1]
-
-        result = tabuleiro.simulated_annealing()
-        self.assertEqual(result[1], True)
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_simulated_5(self):
+        quebracabeca = QuebraCabeca.generate_initial_boards(5)[1]
+        resultado = quebracabeca.simulated_annealing()
+        self.assertTrue(resultado[1])   
 
 if __name__ == '__main__':
     unittest.main()

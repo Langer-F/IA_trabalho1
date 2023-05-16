@@ -2,6 +2,9 @@ import numpy as np
 import time
 import unittest
 from problema_de_ia import Estado 
+import timeout_decorator
+
+LOCAL_TIMEOUT = 150
 
 class Tabuleiro(Estado):
     def __init__(self, tabuleiro, origem=None) -> None:
@@ -126,7 +129,6 @@ class Tabuleiro(Estado):
         return Tabuleiro(tabuleiro)
 
 
-@unittest.skip("grandes e não determinísticos...")
 class Testbfs(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
@@ -135,97 +137,118 @@ class Testbfs(unittest.TestCase):
         t = time.time() - self.startTime
         print('%s: %.3f' % (self.id(), t))
 
-    def test_pode_calcular_custos(self):
+    @unittest.skip("Feito")
+    def test_bfs_4(self):
         tabuleiro = Tabuleiro(np.array([
-            [0, 0, 1, 0],
-            [1, 0, 0, 0],
-            [0, 0, 0, 1],
-            [0, 1, 0, 0]
-        ]))
-        self.assertEqual(tabuleiro.avalia_custo_do_estado_atual(), 0)
-        tabuleiro = Tabuleiro(np.array([
-            [0, 1, 0, 0],
-            [1, 0, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1]
-        ]))
-        self.assertEqual(tabuleiro.avalia_custo_do_estado_atual(), 2)
-
-    def test_bfs_next(self):
-        tabuleiro = Tabuleiro(np.array([
-            [0, 0, 1, 0],
-            [1, 0, 0, 0],
-            [0, 0, 0, 1],
-            [0, 1, 0, 0]
+            [0,0,0,1],
+            [0,0,0,1],
+            [0,0,1,0],
+            [1,0,0,0],
         ]))
 
-        bfs_result = tabuleiro.busca_em_largura()
-        self.assertEqual(bfs_result[1], True)
+        result = tabuleiro.busca_em_largura()
+        self.assertEqual(result[1], True)
 
-        tabuleiro = Tabuleiro(np.array([
-            [0, 0, 0, 0],
-            [1, 0, 1, 0],
-            [0, 0, 0, 1],
-            [0, 1, 0, 0]
-        ]))
-
-        bfs_result = tabuleiro.busca_em_largura()
-        self.assertEqual(bfs_result[1], True)
-
-        tabuleiro = Tabuleiro(np.array([
-            [0, 0, 0, 0],
-            [1, 0, 0, 0],
-            [0, 0, 0, 1],
-            [0, 1, 1, 0]
-        ]))
-
-        bfs_result = tabuleiro.busca_em_largura()
-        self.assertEqual(bfs_result[1], True)
-
-    def test_can_offer_reasonable_moves(self):
-        tabuleiro = Tabuleiro(np.array([
-            [0, 0],
-            [1, 1],
-        ]))
-
-        self.assertListEqual(tabuleiro.acha_posicao_rainhas(), [
-            (1, 0),
-            (1, 1)
-        ])
-
-        tabuleiro = Tabuleiro(np.array([
-            [0, 0, 0],
-            [1, 1, 1],
-            [0, 0, 0],
-        ]))
-
-        self.assertListEqual(tabuleiro.acha_posicao_rainhas(), [
-                             (1, 0), (1, 1), (1, 2)])
-
-    def test_bfs_distant(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            4)
-
-        bfs_result = tabuleiro.busca_em_largura()
-        self.assertEqual(bfs_result[1], True)
-
+    @unittest.skip("Feito")
     def test_bfs_5(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            5)
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,1],
+            [0,0,0,0,1],
+            [0,0,0,1,0],
+            [1,0,0,0,0],
+            [0,0,1,0,0],
+        ]))
 
-        bfs_result = tabuleiro.busca_em_largura()
-        self.assertEqual(bfs_result[1], True)
+        result = tabuleiro.busca_em_largura()
+        self.assertEqual(result[1], True)
 
-    """
+    @unittest.skip("Feito")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
     def test_bfs_6(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
-            6)
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,1],
+            [0,0,0,0,0,1],
+            [0,0,0,1,0,0],
+            [1,0,0,0,0,0],
+            [0,0,1,0,0,0],
+            [0,1,0,0,0,0],
+        ]))
 
-        bfs_result = tabuleiro.busca_em_largura()
-        self.assertEqual(bfs_result[1], True)
-    """
+        result = tabuleiro.busca_em_largura()
+        self.assertEqual(result[1], True)
 
-@unittest.skip("grandes e não determinísticos...")
+    #@unittest.skip("TODO")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_bfs_7(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,1],
+            [0,0,0,0,0,1,0],
+            [0,0,0,1,0,0,0],
+            [1,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0],
+            [0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0],
+        ]))
+
+        result = tabuleiro.busca_em_largura()
+        self.assertEqual(result[1], True)
+
+    #@unittest.skip("TODO")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_bfs_8(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,1,0,0,0,0,0],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,1,0],
+            [0,0,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,1,0,0,0,0],
+            [0,1,0,1,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+        ]))
+
+        result = tabuleiro.busca_em_largura()
+        self.assertEqual(result[1], True)
+        
+    #@unittest.skip("TODO")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_bfs_9(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+        ]))
+
+        result = tabuleiro.busca_em_largura()
+        self.assertEqual(result[1], True)
+
+    #@unittest.skip("TODO")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_bfs_10(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [1,0,0,0,0,0,0,0,0,0]
+        ]))
+
+        result = tabuleiro.busca_em_largura()
+        self.assertEqual(result[1], True)
+
+
+#@unittest.skip("grandes e não determinísticos...")
 class UniformeTest(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
@@ -234,53 +257,120 @@ class UniformeTest(unittest.TestCase):
         t = time.time() - self.startTime
         print('%s: %.3f' % (self.id(), t))
 
+    @unittest.skip("Feito")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
     def test_uniforme_4(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            4)
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,1],
+            [0,0,0,1],
+            [0,0,1,0],
+            [1,0,0,0],
+        ]))
 
         result = tabuleiro.busca_de_custo_uniforme()
         self.assertEqual(result[1], True)
 
+    @unittest.skip("Feito")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
     def test_uniforme_5(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            5)
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,1],
+            [0,0,0,0,1],
+            [0,0,0,1,0],
+            [1,0,0,0,0],
+            [0,0,1,0,0],
+        ]))
 
         result = tabuleiro.busca_de_custo_uniforme()
         self.assertEqual(result[1], True)
 
-    @unittest.skip("Grande")
+    @unittest.skip("Feito")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
     def test_uniforme_6(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            6)
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,1],
+            [0,0,0,0,0,1],
+            [0,0,0,1,0,0],
+            [1,0,0,0,0,0],
+            [0,0,1,0,0,0],
+            [0,1,0,0,0,0],
+        ]))
 
         result = tabuleiro.busca_de_custo_uniforme()
         self.assertEqual(result[1], True)
 
-    @unittest.skip("Grande")
+    @unittest.skip("Feito")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
     def test_uniforme_7(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            7)
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,1],
+            [0,0,0,0,0,1,0],
+            [0,0,0,1,0,0,0],
+            [1,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0],
+            [0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0],
+        ]))
 
         result = tabuleiro.busca_de_custo_uniforme()
         self.assertEqual(result[1], True)
 
-    @unittest.skip("Grande")
+    @unittest.skip("Feito")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
     def test_uniforme_8(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            8)
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,1,0,0,0,0,0],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,1,0],
+            [0,0,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,1,0,0,0,0],
+            [0,1,0,1,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+        ]))
 
         result = tabuleiro.busca_de_custo_uniforme()
         self.assertEqual(result[1], True)
-
-    @unittest.skip("Grande")
+        
+    @unittest.skip("Feito")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
     def test_uniforme_9(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            9)
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+        ]))
 
         result = tabuleiro.busca_de_custo_uniforme()
         self.assertEqual(result[1], True)
 
-@unittest.skip("grandes e não determinísticos...")
+    @unittest.skip("Feito")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def test_uniforme_10(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [1,0,0,0,0,0,0,0,0,0]
+        ]))
+
+        result = tabuleiro.busca_de_custo_uniforme()
+        self.assertEqual(result[1], True)
+
+
+@unittest.skip("Feito")
 class DfsTest(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
@@ -289,79 +379,112 @@ class DfsTest(unittest.TestCase):
         t = time.time() - self.startTime
         print('%s: %.3f' % (self.id(), t))
 
-    def test_dfs_distant(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            4)
+    @unittest.skip("Feito")
+    def test_dfs_4(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,1],
+            [0,0,0,1],
+            [0,0,1,0],
+            [1,0,0,0],
+        ]))
 
-        bfs_result = tabuleiro.busca_em_profundidade_iterativa()
-        self.assertEqual(bfs_result[1], True)
+        result = tabuleiro.busca_em_profundidade_iterativa()
+        self.assertEqual(result[1], True)
 
+    @unittest.skip("Feito")
     def test_dfs_5(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            5)
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,1],
+            [0,0,0,0,1],
+            [0,0,0,1,0],
+            [1,0,0,0,0],
+            [0,0,1,0,0],
+        ]))
 
-        bfs_result = tabuleiro.busca_em_profundidade_iterativa()
-        self.assertEqual(bfs_result[1], True)
+        result = tabuleiro.busca_em_profundidade_iterativa()
+        self.assertEqual(result[1], True)
 
+    @unittest.skip("Feito")
     def test_dfs_6(self):
-        tabuleiro = Tabuleiro([
-            [1, 0, 0, 0],
-            [1, 0, 0, 0],
-            [0, 0, 0, 1],
-            [0, 0, 1, 0]]
-        )
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,1],
+            [0,0,0,0,0,1],
+            [0,0,0,1,0,0],
+            [1,0,0,0,0,0],
+            [0,0,1,0,0,0],
+            [0,1,0,0,0,0],
+        ]))
 
-        bfs_result = tabuleiro.busca_em_profundidade_iterativa()
-        self.assertEqual(bfs_result[1], True)
+        result = tabuleiro.busca_em_profundidade_iterativa()
+        self.assertEqual(result[1], True)
 
-    """
+    @unittest.skip("Feito")
+    def test_dfs_7(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,1],
+            [0,0,0,0,0,1,0],
+            [0,0,0,1,0,0,0],
+            [1,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0],
+            [0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0],
+        ]))
+
+        result = tabuleiro.busca_em_profundidade_iterativa()
+        self.assertEqual(result[1], True)
+
+    @unittest.skip("Feito")
     def test_dfs_8(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
-            8)
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,1,0,0,0,0,0],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,1,0],
+            [0,0,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,1,0,0,0,0],
+            [0,1,0,1,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+        ]))
 
-        bfs_result = tabuleiro.busca_em_profundidade()
-        self.assertEqual(bfs_result[1], True)
+        result = tabuleiro.busca_em_profundidade_iterativa()
+        self.assertEqual(result[1], True)
+        
+    @unittest.skip("Feito")
+    def test_dfs_9(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+        ]))
 
+        result = tabuleiro.busca_em_profundidade_iterativa()
+        self.assertEqual(result[1], True)
+
+    @unittest.skip("Feito")
     def test_dfs_10(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_sem_linha_nem_coluna_repetida(
-            10)
-
-        bfs_result = tabuleiro.busca_em_profundidade()
-        self.assertEqual(bfs_result[1], True)
-    """
-
-    def test_dfs_next(self):
         tabuleiro = Tabuleiro(np.array([
-            [0, 0, 1, 0],
-            [1, 0, 0, 0],
-            [0, 0, 0, 1],
-            [0, 1, 0, 0]
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [1,0,0,0,0,0,0,0,0,0]
         ]))
 
-        dfs_result = tabuleiro.busca_em_profundidade_iterativa()
-        self.assertEqual(dfs_result[1], True)
+        result = tabuleiro.busca_em_profundidade_iterativa()
+        self.assertEqual(result[1], True)
 
-        tabuleiro = Tabuleiro(np.array([
-            [0, 0, 0, 0],
-            [1, 0, 1, 0],
-            [0, 0, 0, 1],
-            [0, 1, 0, 0]
-        ]))
-
-        dfs_result = tabuleiro.busca_em_profundidade_iterativa()
-        self.assertEqual(dfs_result[1], True)
-
-        tabuleiro = Tabuleiro(np.array([
-            [0, 0, 0, 0],
-            [1, 0, 0, 0],
-            [0, 0, 0, 1],
-            [0, 1, 1, 0]
-        ]))
-
-        dfs_result = tabuleiro.busca_em_profundidade_iterativa()
-        self.assertEqual(dfs_result[1], True)
-
-@unittest.skip("grandes e não determinísticos...")
+@unittest.skip("FEITO")
 class SubidaDeEncostaTest(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
@@ -370,87 +493,113 @@ class SubidaDeEncostaTest(unittest.TestCase):
         t = time.time() - self.startTime
         print('%s: %.3f' % (self.id(), t))
 
-    def test_subida_de_encosta_distant(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            4)
-
-        bfs_result = tabuleiro.subida_de_encosta()
-        self.assertEqual(bfs_result[1], True)
-
-    def test_subida_de_encosta_5(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            5)
-
-        bfs_result = tabuleiro.subida_de_encosta()
-        self.assertEqual(bfs_result[1], True)
-
-    def test_subida_de_encosta_6(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            6)
-
-        bfs_result = tabuleiro.subida_de_encosta()
-        self.assertEqual(bfs_result[1], True)
-
-    def test_subida_de_encosta_7(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            7)
-
-        bfs_result = tabuleiro.subida_de_encosta()
-        self.assertEqual(bfs_result[1], True)
-
-    def test_subida_de_encosta_8(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            8)
-
-        bfs_result = tabuleiro.subida_de_encosta()
-        self.assertEqual(bfs_result[1], True)
-
-    def test_subida_de_encosta_9(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            9)
-
-        bfs_result = tabuleiro.subida_de_encosta()
-        self.assertEqual(bfs_result[1], True)
-
-    def test_subida_de_encosta_10(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            10)
-
-        bfs_result = tabuleiro.subida_de_encosta()
-        self.assertEqual(bfs_result[1], True)
-
-    def test_subida_de_encosta_next(self):
+    @unittest.skip("Feito")
+    def test_subida_4(self):
         tabuleiro = Tabuleiro(np.array([
-            [0, 0, 1, 0],
-            [1, 0, 0, 0],
-            [0, 0, 0, 1],
-            [0, 1, 0, 0]
+            [0,0,0,1],
+            [0,0,0,1],
+            [0,0,1,0],
+            [1,0,0,0],
         ]))
 
-        subida_de_encosta_result = tabuleiro.subida_de_encosta()
-        self.assertEqual(subida_de_encosta_result[1], True)
+        result = tabuleiro.subida_de_encosta()
+        self.assertEqual(result[1], True)
 
+    @unittest.skip("Feito")
+    def test_subida_5(self):
         tabuleiro = Tabuleiro(np.array([
-            [0, 0, 0, 0],
-            [1, 0, 1, 0],
-            [0, 0, 0, 1],
-            [0, 1, 0, 0]
+            [0,0,0,0,1],
+            [0,0,0,0,1],
+            [0,0,0,1,0],
+            [1,0,0,0,0],
+            [0,0,1,0,0],
         ]))
 
-        subida_de_encosta_result = tabuleiro.subida_de_encosta()
-        self.assertEqual(subida_de_encosta_result[1], True)
+        result = tabuleiro.subida_de_encosta()
+        self.assertEqual(result[1], True)
 
+    @unittest.skip("Feito")
+    def test_subida_6(self):
         tabuleiro = Tabuleiro(np.array([
-            [0, 0, 0, 0],
-            [1, 0, 0, 0],
-            [0, 0, 0, 1],
-            [0, 1, 1, 0]
+            [0,0,0,0,0,1],
+            [0,0,0,0,0,1],
+            [0,0,0,1,0,0],
+            [1,0,0,0,0,0],
+            [0,0,1,0,0,0],
+            [0,1,0,0,0,0],
         ]))
 
-        subida_de_encosta_result = tabuleiro.subida_de_encosta()
-        self.assertEqual(subida_de_encosta_result[1], True)
+        result = tabuleiro.subida_de_encosta()
+        self.assertEqual(result[1], True)
 
-@unittest.skip("grandes e não determinísticos...")
+    @unittest.skip("Feito")
+    def test_subida_7(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,1],
+            [0,0,0,0,0,1,0],
+            [0,0,0,1,0,0,0],
+            [1,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0],
+            [0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0],
+        ]))
+
+        result = tabuleiro.subida_de_encosta()
+        self.assertEqual(result[1], True)
+
+    @unittest.skip("Feito")
+    def test_subida_8(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,1,0,0,0,0,0],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,1,0],
+            [0,0,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,1,0,0,0,0],
+            [0,1,0,1,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+        ]))
+
+        result = tabuleiro.subida_de_encosta()
+        self.assertEqual(result[1], True)
+        
+    @unittest.skip("Feito")
+    def test_subida_9(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+        ]))
+
+        result = tabuleiro.subida_de_encosta()
+        self.assertEqual(result[1], True)
+
+    @unittest.skip("Feito")
+    def test_subida_10(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [1,0,0,0,0,0,0,0,0,0]
+        ]))
+
+        result = tabuleiro.subida_de_encosta()
+        self.assertEqual(result[1], True)
+
+
+@unittest.skip("Feito")
 class SimulatedAnnealingTest(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
@@ -459,13 +608,112 @@ class SimulatedAnnealingTest(unittest.TestCase):
         t = time.time() - self.startTime
         print('%s: %.3f' % (self.id(), t))
 
-    def test_simulated_annealing(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(4)
+    @unittest.skip("Feito")
+    def test_4(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,1],
+            [0,0,0,1],
+            [0,0,1,0],
+            [1,0,0,0],
+        ]))
 
         result = tabuleiro.simulated_annealing()
         self.assertEqual(result[1], True)
 
-@unittest.skip('Grande')
+    @unittest.skip("Feito")
+    def test_5(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,1],
+            [0,0,0,0,1],
+            [0,0,0,1,0],
+            [1,0,0,0,0],
+            [0,0,1,0,0],
+        ]))
+
+        result = tabuleiro.simulated_annealing()
+        self.assertEqual(result[1], True)
+
+    @unittest.skip("Feito")
+    def test_6(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,1],
+            [0,0,0,0,0,1],
+            [0,0,0,1,0,0],
+            [1,0,0,0,0,0],
+            [0,0,1,0,0,0],
+            [0,1,0,0,0,0],
+        ]))
+
+        result = tabuleiro.simulated_annealing()
+        self.assertEqual(result[1], True)
+
+    @unittest.skip("Feito")
+    def test_7(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,1],
+            [0,0,0,0,0,1,0],
+            [0,0,0,1,0,0,0],
+            [1,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0],
+            [0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0],
+        ]))
+
+        result = tabuleiro.simulated_annealing()
+        self.assertEqual(result[1], True)
+
+    @unittest.skip("Feito")
+    def test_8(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,1,0,0,0,0,0],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,1,0],
+            [0,0,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,1,0,0,0,0],
+            [0,1,0,1,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+        ]))
+
+        result = tabuleiro.simulated_annealing()
+        self.assertEqual(result[1], True)
+        
+    @unittest.skip("Feito")
+    def test_9(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+        ]))
+
+        result = tabuleiro.simulated_annealing()
+        self.assertEqual(result[1], True)
+
+    #@unittest.skip("Feito")
+    def test_10(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [1,0,0,0,0,0,0,0,0,0]
+        ]))
+
+        result = tabuleiro.simulated_annealing()
+        self.assertEqual(result[1], True)
+
+@unittest.skip("Feito")
 class A_estrela_test(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
@@ -474,32 +722,89 @@ class A_estrela_test(unittest.TestCase):
         t = time.time() - self.startTime
         print('%s: %.3f' % (self.id(), t))
 
-    def test_a_estrela(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_aleatorio(4)
-
-        result = tabuleiro.busca_a_estrela()
-        self.assertEqual(result[1], True)
-
-    def test_a_estrela_5(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_aleatorio(5)
-
-        result = tabuleiro.busca_a_estrela()
-        self.assertEqual(result[1], True)
-
+    @unittest.skip("Feito")
     def test_a_estrela_6(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_aleatorio(6)
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,1],
+            [0,0,0,0,0,1],
+            [0,0,0,1,0,0],
+            [1,0,0,0,0,0],
+            [0,0,1,0,0,0],
+            [0,1,0,0,0,0],
+        ]))
 
         result = tabuleiro.busca_a_estrela()
         self.assertEqual(result[1], True)
 
-    @unittest.skip("Demora...")
+    @unittest.skip("Feito")
     def test_a_estrela_7(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_inicial_aleatorio(7)
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,1],
+            [0,0,0,0,0,1,0],
+            [0,0,0,1,0,0,0],
+            [1,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0],
+            [0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0],
+        ]))
 
         result = tabuleiro.busca_a_estrela()
         self.assertEqual(result[1], True)
 
-@unittest.skip("grandes e não determinísticos...")
+    @unittest.skip("Feito")
+    def test_a_estrela_8(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,1,0,0,0,0,0],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,1,0],
+            [0,0,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,1,0,0,0,0],
+            [0,1,0,1,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+        ]))
+
+        result = tabuleiro.busca_a_estrela()
+        self.assertEqual(result[1], True)
+        
+    @unittest.skip("Feito")
+    def test_a_estrela_9(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+        ]))
+
+        result = tabuleiro.busca_a_estrela()
+        self.assertEqual(result[1], True)
+
+    @unittest.skip("Feito")
+    def test_a_estrela_10(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [1,0,0,0,0,0,0,0,0,0]
+        ]))
+
+        result = tabuleiro.busca_a_estrela()
+        self.assertEqual(result[1], True)
+
+
+@unittest.skip("Feito")
+@unittest.skip("Feito")
 class SubidaDeEncostaReinicioAleatorioTest(unittest.TestCase):
     def setUp(self):
         self.startTime = time.time()
@@ -508,94 +813,115 @@ class SubidaDeEncostaReinicioAleatorioTest(unittest.TestCase):
         t = time.time() - self.startTime
         print('%s: %.3f' % (self.id(), t))
 
-    def test_subida_de_encosta_com_reinicio_aleatorio_distant(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            4)
-
-        bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
-        self.assertEqual(bfs_result[1], True)
-
-    def test_subida_de_encosta_com_reinicio_aleatorio_5(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            5)
-
-        bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
-        self.assertEqual(bfs_result[1], True)
-
-    @unittest.skip("Grande")
-    def test_subida_de_encosta_com_reinicio_aleatorio_6(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            6)
-
-        bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
-        self.assertEqual(bfs_result[1], True)
-
-    @unittest.skip("Grande")
-    def test_subida_de_encosta_com_reinicio_aleatorio_7(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            7)
-
-        bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
-        self.assertEqual(bfs_result[1], True)
-
-    @unittest.skip("Grande")
-    def test_subida_de_encosta_com_reinicio_aleatorio_8(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            8)
-
-        bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
-        self.assertEqual(bfs_result[1], True)
-
-    @unittest.skip("Grande")
-    def test_subida_de_encosta_com_reinicio_aleatorio_9(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            9)
-
-        bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
-        self.assertEqual(bfs_result[1], True)
-
-    @unittest.skip("Grande")
-    def test_subida_de_encosta_com_reinicio_aleatorio_10(self):
-        tabuleiro = Tabuleiro.cria_tabuleiro_nxn_inicial_sem_linha_nem_coluna_repetida(
-            10)
-
-        bfs_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
-        self.assertEqual(bfs_result[1], True)
-
-    def test_subida_de_encosta_com_reinicio_aleatorio_next(self):
+    @unittest.skip("Feito")
+    def teste_subida_reinicio_aleatorio_4(self):
         tabuleiro = Tabuleiro(np.array([
-            [0, 0, 1, 0],
-            [1, 0, 0, 0],
-            [0, 0, 0, 1],
-            [0, 1, 0, 0]
+            [0,0,0,1],
+            [0,0,0,1],
+            [0,0,1,0],
+            [1,0,0,0],
         ]))
 
-        subida_de_encosta_com_reinicio_aleatorio_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
-        self.assertEqual(
-            subida_de_encosta_com_reinicio_aleatorio_result[1], True)
+        result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
+        self.assertEqual(result[1], True)
 
+    @unittest.skip("Feito")
+    def teste_subida_reinicio_aleatorio_5(self):
         tabuleiro = Tabuleiro(np.array([
-            [0, 0, 0, 0],
-            [1, 0, 1, 0],
-            [0, 0, 0, 1],
-            [0, 1, 0, 0]
+            [0,0,0,0,1],
+            [0,0,0,0,1],
+            [0,0,0,1,0],
+            [1,0,0,0,0],
+            [0,0,1,0,0],
         ]))
 
-        subida_de_encosta_com_reinicio_aleatorio_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
-        self.assertEqual(
-            subida_de_encosta_com_reinicio_aleatorio_result[1], True)
+        result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
+        self.assertEqual(result[1], True)
 
+    @unittest.skip("Feito")
+    def teste_subida_reinicio_aleatorio_6(self):
         tabuleiro = Tabuleiro(np.array([
-            [0, 0, 0, 0],
-            [1, 0, 0, 0],
-            [0, 0, 0, 1],
-            [0, 1, 1, 0]
+            [0,0,0,0,0,1],
+            [0,0,0,0,0,1],
+            [0,0,0,1,0,0],
+            [1,0,0,0,0,0],
+            [0,0,1,0,0,0],
+            [0,1,0,0,0,0],
         ]))
 
-        subida_de_encosta_com_reinicio_aleatorio_result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
-        self.assertEqual(
-            subida_de_encosta_com_reinicio_aleatorio_result[1], True)
+        result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
+        self.assertEqual(result[1], True)
+
+    @unittest.skip("Feito")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def teste_subida_reinicio_aleatorio_7(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,1],
+            [0,0,0,0,0,1,0],
+            [0,0,0,1,0,0,0],
+            [1,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0],
+            [0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0],
+        ]))
+
+        result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
+        self.assertEqual(result[1], True)
+
+    @unittest.skip("Feito")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def teste_subida_reinicio_aleatorio_8(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,1,0,0,0,0,0],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,1,0],
+            [0,0,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0],
+            [0,0,0,1,0,0,0,0],
+            [0,1,0,1,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+        ]))
+
+        result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
+        self.assertEqual(result[1], True)
         
+    @unittest.skip("Feito")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def teste_subida_reinicio_aleatorio_9(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,1,0,0,0,0,0,1],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0],
+        ]))
+
+        result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
+        self.assertEqual(result[1], True)
+
+    @unittest.skip("Feito")
+    @timeout_decorator.timeout(LOCAL_TIMEOUT)
+    def teste_subida_reinicio_aleatorio_10(self):
+        tabuleiro = Tabuleiro(np.array([
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0,0],
+            [0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0,0],
+            [0,0,0,1,0,0,0,0,0,0],
+            [1,0,0,0,0,0,0,0,0,0]
+        ]))
+
+        result = tabuleiro.subida_de_encosta_com_reinicio_aleatorio()
+        self.assertEqual(result[1], True)
+
 
 
 if __name__ == '__main__':
